@@ -7,7 +7,7 @@
 Here is a simple chatbot made with the library:
 
 ```js
-const Insta = require('insta.js')
+const Insta = require('@androz2091/insta.js')
 
 const client = new Insta.Client()
 
