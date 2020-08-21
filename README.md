@@ -7,13 +7,13 @@
 Here is a simple chatbot made with the library:
 
 ```js
-const Insta = require('@androz2091/insta.js')
+const Insta = require('@androz2091/insta.js');
 
-const client = new Insta.Client()
+const client = new Insta.Client();
 
 client.on('connected', () => {
-    console.log(`Logged in as ${client.user.username}`)
-})
+    console.log(`Logged in as ${client.user.username}`);
+});
 
 client.on('messageCreate', (message) => {
     if (message.authorID === client.user.id) return
@@ -21,15 +21,14 @@ client.on('messageCreate', (message) => {
     if (message.content === '!ping') {
         message.author.send('!pong');
     }
-})
+});
 
-client.on('messageDelete', (message) => {
-    if (message) { // sometimes the message was not cached
-        console.log(message.content)
-    }
-})
+client.on('messageDelete', (cachedMessage) => {
+    if (!cachedMessage) return;
+    console.log(`@${cachedMessage.author.username} has just deleted their message: ${cachedMessage.content}`);
+});
 
-client.login('username', 'password')
+client.login('username', 'password');
 ```
 
 ## To do
