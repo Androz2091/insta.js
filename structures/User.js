@@ -2,10 +2,15 @@ module.exports = class User {
     constructor (client, data) {
         this.client = client
         this._patch(data)
+        this.fetchPromise = null
     }
 
     get thread () {
         return this.client.ig.entity.directThread([this.id])
+    }
+
+    get fetched () {
+        return Boolean(this.username)
     }
 
     _patch (data) {

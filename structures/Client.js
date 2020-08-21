@@ -22,31 +22,29 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
-    async fetchUser (userID) {
-        if (!this.cache.users.has(userID)) {
-            const userPayload = await this.ig.user.info(userID)
-            const user = new User(this, userPayload)
-            this.cache.users.set(user.id, user)
-        }
-        return this.cache.users.get(userID)
+    async fetchUserInfos (userID) {
+        const user = await this.ig.user.info(userID)
+        this.cache.users.get(user.pk)._patch(user)
+    }
+
+    async fetchUser (userID, needFetch) {
+        const user = this.cache.users.get(userID) || new User(this, { pk: userID })
+        if (!user.fetchPromise) user.fetchPromise = this.fetchUserInfos(userID)
+        if (!this.cache.users.has(userID)) this.cache.users.set(userID, user)
+        if (needFetch) await user.fetchPromise
+        return user
     }
 
     handleReceive (topic, payload) {
         if (topic.id === '146') {
-            console.time('process')
-            console.timeLog('process')
             const rawMessages = JSON.parse(payload)
-            console.timeLog('process')
             rawMessages.forEach(async (rawMessage) => {
                 switch (rawMessage.data[0].op) {
                 case 'add': {
                     const message = new Message(this, JSON.parse(rawMessage.data[0].value))
-                    console.timeLog('process')
-                    await this.fetchUser(message.authorID)
-                    console.timeLog('process')
+                    await this.fetchUser(message.authorID, false)
                     this.cache.messages.set(message.id, message)
                     this.emit('messageCreate', message)
-                    console.timeEnd('process')
                     break
                 }
 
@@ -72,22 +70,13 @@ module.exports = class InstaClient extends EventEmitter {
             this.emit('connected')
 
             ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
-            // ig.realtime.on('direct', logEvent('direct'));
-            // ig.realtime.on('realtimeSub', logEvent('realtimeSub'));
             ig.realtime.on('error', console.error)
             ig.realtime.on('close', () => console.error('RealtimeClient closed'))
 
             await ig.realtime.connect({
                 graphQlSubs: [
-                    GraphQLSubscriptions.getAppPresenceSubscription(),
-                    GraphQLSubscriptions.getZeroProvisionSubscription(ig.state.phoneId),
-                    GraphQLSubscriptions.getDirectStatusSubscription(),
-                    GraphQLSubscriptions.getDirectTypingSubscription(ig.state.cookieUserId),
-                    GraphQLSubscriptions.getAsyncAdSubscription(ig.state.cookieUserId)
                 ],
                 skywalkerSubs: [
-                    SkywalkerSubscriptions.directSub(ig.state.cookieUserId)
-                    // SkywalkerSubscriptions.liveSub(ig.state.cookieUserId)
                 ],
                 irisData: await ig.feed.directInbox().request(),
                 connectOverrides: {
