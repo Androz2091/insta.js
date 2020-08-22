@@ -1,6 +1,10 @@
 module.exports = class Message {
-    constructor (client, data) {
+    constructor (client, threadID, data) {
         this.client = client
+        this.threadID = threadID
+        this.client.getDirectThread(this.threadID, {
+            userID: data.user_id
+        })
         this._patch(data)
     }
 
@@ -12,7 +16,17 @@ module.exports = class Message {
         this.timestamp = data.timestamp
     }
 
+    get thread () {
+        return this.client.getDirectThread(this.threadID, {
+            userID: this.authorID
+        })
+    }
+
     get author () {
-        return this.client.cache.users.get(this.authorID)
+        return this.client.getUser(this.authorID)
+    }
+
+    async markSeen () {
+        await this.client.ig.directThread.markItemSeen(this.threadID, this.id)
     }
 }

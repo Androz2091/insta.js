@@ -14,6 +14,7 @@ module.exports = {
         indent: ['error', 4],
         'comma-dangle': ['error', 'never'],
         'no-underscore-dangle': 0,
-        'max-len': 0
+        'max-len': 0,
+        'array-bracket-spacing': ['error', 'always']
     }
 }
