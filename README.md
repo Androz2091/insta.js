@@ -1,4 +1,4 @@
-# Insta.js
+# [Insta.js](https://npmjs.com/@androz2091/insta.js)
 
 💬 Object-oriented library for sending and receiving messages via Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)** and made for the **[PronoteBot](https://github.com/Androz2091/pronote-bot)** project.
 
