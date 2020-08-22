@@ -2,15 +2,10 @@ module.exports = class User {
     constructor (client, data) {
         this.client = client
         this._patch(data)
-        this.fetchPromise = null
     }
 
     get thread () {
-        return this.client.ig.entity.directThread([this.id])
-    }
-
-    get fetched () {
-        return Boolean(this.username)
+        return this.client.cache.threads.find((thread) => thread.userID === this.id)
     }
 
     _patch (data) {
@@ -49,6 +44,6 @@ module.exports = class User {
     }
 
     send (content) {
-        return this.thread.broadcastText(content)
+        return this.thread.send(content)
     }
 }

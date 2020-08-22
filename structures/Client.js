@@ -1,13 +1,16 @@
 const { withRealtime } = require('instagram_mqtt')
-const { GraphQLSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
+// const { GraphQLSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
 const { IgApiClient } = require('instagram-private-api')
-const { SkywalkerSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
+// const { SkywalkerSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
 const { EventEmitter } = require('events')
 const Collection = require('@discordjs/collection')
+
+const Util = require('../utils/Util')
 
 const User = require('./User')
 const ClientUser = require('./ClientUser')
 const Message = require('./Message')
+const DirectThread = require('./DirectThread')
 
 module.exports = class InstaClient extends EventEmitter {
     constructor () {
@@ -18,20 +21,28 @@ module.exports = class InstaClient extends EventEmitter {
 
         this.cache = {
             messages: new Collection(),
-            users: new Collection()
+            users: new Collection(),
+            threads: new Collection()
         }
     }
 
-    async fetchUserInfos (userID) {
-        const user = await this.ig.user.info(userID)
-        this.cache.users.get(user.pk)._patch(user)
+    getDirectThread (threadID, data) {
+        const existing = this.cache.threads.get(threadID)
+        if (existing) return existing
+        if (!data.messages) data.messages = []
+        data.messages = [ ...data.messages, ...this.cache.messages.filter((m) => m.threadID === threadID).array() ]
+        const thread = new DirectThread(this, threadID, data)
+        this.cache.threads.set(threadID, thread)
+        return thread
     }
 
-    async fetchUser (userID, needFetch) {
-        const user = this.cache.users.get(userID) || new User(this, { pk: userID })
-        if (!user.fetchPromise) user.fetchPromise = this.fetchUserInfos(userID)
-        if (!this.cache.users.has(userID)) this.cache.users.set(userID, user)
-        if (needFetch) await user.fetchPromise
+    getUser (userID) {
+        const existing = this.cache.users.get(userID)
+        if (existing) return existing
+        const user = new User(this, {
+            pk: userID
+        })
+        this.cache.users.set(userID, user)
         return user
     }
 
@@ -41,8 +52,8 @@ module.exports = class InstaClient extends EventEmitter {
             rawMessages.forEach(async (rawMessage) => {
                 switch (rawMessage.data[0].op) {
                 case 'add': {
-                    const message = new Message(this, JSON.parse(rawMessage.data[0].value))
-                    await this.fetchUser(message.authorID, false)
+                    const threadID = Util.parseAddMessageURL(rawMessage.data[0].path).threadID
+                    const message = new Message(this, threadID, JSON.parse(rawMessage.data[0].value))
                     this.cache.messages.set(message.id, message)
                     this.emit('messageCreate', message)
                     break

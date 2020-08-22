@@ -18,6 +18,8 @@ client.on('connected', () => {
 client.on('messageCreate', (message) => {
     if (message.authorID === client.user.id) return
 
+    message.markSeen();
+
     if (message.content === '!ping') {
         message.author.send('!pong');
     }
@@ -33,7 +35,6 @@ client.login('username', 'password');
 
 ## To do
 
-* Mark messages as seen
 * Improve `User` and `ClientUser` classes by supporting all the properties sent by the API
 
 ## Credits
