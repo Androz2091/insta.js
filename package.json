@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Androz2091 <androz2091@gmail.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Androz2091/insta.js/issues"
+  },
+  "homepage": "https://github.com/Androz2091/insta.js#readme",
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
     "instagram-private-api": "^1.41.0",
