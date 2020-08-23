@@ -91,7 +91,10 @@ module.exports = class InstaClient extends EventEmitter {
         ig.account.login(username, password).then(async (response) => {
             this.user = new ClientUser(this, response)
 
-            const threads = await ig.feed.directInbox().items()
+            const threads = [
+                ...await ig.feed.directInbox().items(),
+                ...await ig.feed.directPending().items()
+            ]
             threads.forEach((thread) => {
                 console.log(thread.thread_id)
                 this.cache.chats.set(thread.thread_id, new Chat(this, thread.thread_id, thread))

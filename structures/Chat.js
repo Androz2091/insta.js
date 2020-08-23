@@ -12,8 +12,11 @@ module.exports = class Chat {
         this._patch(data)
     }
 
+    get threadEntity () {
+        return this.client.ig.entity.directThread(this.id)
+    }
+
     _patch (data) {
-        this.chatIDv2 = data.thread_id_v2
         data.users.forEach((user) => {
             const exisiting = this.client.cache.users.get(user.pk)
             if (exisiting) {
@@ -47,8 +50,9 @@ module.exports = class Chat {
         this.isGroup = data.is_group
     }
 
-    get threadEntity () {
-        return this.client.ig.entity.directThread(this.id)
+    approve () {
+        this.pending = false
+        return this.client.ig.directThread.approve(this.id)
     }
 
     markSeen (messageID) {
