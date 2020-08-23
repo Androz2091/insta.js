@@ -2,31 +2,35 @@ module.exports = class Message {
     constructor (client, threadID, data) {
         this.client = client
         this.threadID = threadID
-        this.client.getDirectThread(this.threadID, {
-            userID: data.user_id
-        })
         this._patch(data)
+    }
+
+    get chat () {
+        return this.client.cache.chats.get(this.threadID)
     }
 
     _patch (data) {
         this.id = data.item_id
         this.type = data.item_type
-        this.authorID = data.user_id
-        this.content = data.text
         this.timestamp = data.timestamp
+        this.authorID = data.user_id
+        if ('text' in data) {
+            this.content = data.text
+        }
+        if (this.type === 'link') {
+            this.content = data.link.text
+        }
     }
 
-    get thread () {
-        return this.client.getDirectThread(this.threadID, {
-            userID: this.authorID
-        })
+    delete () {
+        return this.chat.delete(this.id)
     }
 
-    get author () {
-        return this.client.getUser(this.authorID)
+    reply (content) {
+        return this.chat.send(content)
     }
 
-    async markSeen () {
-        await this.client.ig.directThread.markItemSeen(this.threadID, this.id)
+    markSeen () {
+        return this.chat.markSeen(this.id)
     }
 }

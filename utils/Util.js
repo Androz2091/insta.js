@@ -1,5 +1,5 @@
 module.exports = class Util {
-    static parseAddMessageURL (url) {
+    static parseMessagePath (url) {
         const [ , , , threadID, , itemID ] = url.split('/')
         return {
             threadID,

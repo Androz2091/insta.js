@@ -10,6 +10,7 @@ const User = require('./User')
 const ClientUser = require('./ClientUser')
 const Message = require('./Message')
 const DirectThread = require('./DirectThread')
+const Chat = require('./Chat')
 
 module.exports = class InstaClient extends EventEmitter {
     constructor () {
@@ -21,7 +22,7 @@ module.exports = class InstaClient extends EventEmitter {
         this.cache = {
             messages: new Collection(),
             users: new Collection(),
-            threads: new Collection()
+            chats: new Collection()
         }
     }
 
@@ -46,14 +47,26 @@ module.exports = class InstaClient extends EventEmitter {
     }
 
     handleReceive (topic, payload) {
+        console.log(topic, payload)
+
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
+                // Fetch the chat where the message was sent
+                const { threadID } = Util.parseMessagePath(rawMessage.data[0].path)
+                const chat = this.cache.chats.get(threadID)
+
+                // Emit right event
                 switch (rawMessage.data[0].op) {
+                case 'replace': {
+                    // const messagePayload = JSON.parse(rawMessage.data[0].value)
+                    break
+                }
+
                 case 'add': {
-                    const threadID = Util.parseAddMessageURL(rawMessage.data[0].path).threadID
-                    const message = new Message(this, threadID, JSON.parse(rawMessage.data[0].value))
-                    this.cache.messages.set(message.id, message)
+                    const messagePayload = JSON.parse(rawMessage.data[0].value)
+                    const message = new Message(this, threadID, messagePayload)
+                    chat.messages.set(message.id, message)
                     this.emit('messageCreate', message)
                     break
                 }
@@ -77,7 +90,12 @@ module.exports = class InstaClient extends EventEmitter {
         ig.state.generateDevice(username)
         ig.account.login(username, password).then(async (response) => {
             this.user = new ClientUser(this, response)
-            this.emit('connected')
+
+            const threads = await ig.feed.directInbox().items()
+            threads.forEach((thread) => {
+                console.log(thread.thread_id)
+                this.cache.chats.set(thread.thread_id, new Chat(this, thread.thread_id, thread))
+            })
 
             ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
             ig.realtime.on('error', console.error)
@@ -98,6 +116,7 @@ module.exports = class InstaClient extends EventEmitter {
                 keepAliveTimeout: 60
             })
             this.ig = ig
+            this.emit('connected')
         }).catch((e) => {
             throw e
         })

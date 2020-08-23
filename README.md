@@ -36,6 +36,7 @@ client.login('username', 'password');
 ## To do
 
 * Improve `User` and `ClientUser` classes by supporting all the properties sent by the API
+* Add `seen` property to `Message` class.
 
 ## Credits
 
