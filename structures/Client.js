@@ -54,7 +54,7 @@ module.exports = class InstaClient extends EventEmitter {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
                 // Handle new pending requests
-                if (!rawMessage.data[0]) {
+                if (!rawMessage.data[0] && rawMessage.mutation_token) {
                     const newPendingThreads = await this.ig.feed.directPending().items()
                     const chats = newPendingThreads.map((thread) => new Chat(this, thread.thread_id, thread))
                     const pendingChat = chats.find((chat) => !this.cache.pendingChats.has(chat.id))
