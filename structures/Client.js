@@ -1,7 +1,6 @@
 const { withRealtime } = require('instagram_mqtt')
-// const { GraphQLSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
+// const { GraphQLSubscriptions, SkywalkerSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
 const { IgApiClient } = require('instagram-private-api')
-// const { SkywalkerSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
 const { EventEmitter } = require('events')
 const Collection = require('@discordjs/collection')
 
