@@ -56,9 +56,7 @@ module.exports = class Chat {
     }
 
     delete (messageID) {
-        this.threadEntity.deleteItem(messageID).then((t) => {
-            console.log('result', t)
-        })
+        return this.threadEntity.deleteItem(messageID)
     }
 
     send (content) {
