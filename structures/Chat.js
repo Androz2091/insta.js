@@ -54,7 +54,7 @@ module.exports = class Chat {
         return this.client.ig.entity.directThread(this.id)
     }
 
-    /* markSeen (messageID) {
+    markSeen (messageID) {
         return this.threadEntity.markItemSeen(messageID)
     }
 
@@ -62,7 +62,7 @@ module.exports = class Chat {
         this.threadEntity.deleteItem(messageID).then((t) => {
             console.log('result', t)
         })
-    } */
+    }
 
     send (content) {
         return new Promise((resolve) => {
