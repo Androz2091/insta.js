@@ -50,9 +50,10 @@ module.exports = class Chat {
         this.isGroup = data.is_group
     }
 
-    approve () {
+    async approve () {
         this.pending = false
-        return this.client.ig.directThread.approve(this.id)
+        await this.client.ig.directThread.approve(this.id)
+        this.emit('messageCreate', this.messages.first())
     }
 
     markSeen (messageID) {

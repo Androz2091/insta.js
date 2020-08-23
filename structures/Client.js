@@ -22,7 +22,8 @@ module.exports = class InstaClient extends EventEmitter {
         this.cache = {
             messages: new Collection(),
             users: new Collection(),
-            chats: new Collection()
+            chats: new Collection(),
+            pendingChats: new Collection()
         }
     }
 
@@ -52,6 +53,15 @@ module.exports = class InstaClient extends EventEmitter {
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
+                // Handle new pending requests
+                if (!rawMessage.data[0]) {
+                    const newPendingThreads = await this.ig.feed.directPending().items()
+                    const chats = newPendingThreads.map((thread) => new Chat(this, thread.thread_id, thread))
+                    const pendingChat = chats.find((chat) => !this.cache.pendingChats.has(chat.id))
+                    this.emit('pendingRequest', pendingChat)
+                    return
+                }
+
                 // Fetch the chat where the message was sent
                 const { threadID } = Util.parseMessagePath(rawMessage.data[0].path)
                 const chat = this.cache.chats.get(threadID)
@@ -96,8 +106,11 @@ module.exports = class InstaClient extends EventEmitter {
                 ...await ig.feed.directPending().items()
             ]
             threads.forEach((thread) => {
-                console.log(thread.thread_id)
-                this.cache.chats.set(thread.thread_id, new Chat(this, thread.thread_id, thread))
+                const chat = new Chat(this, thread.thread_id, thread)
+                this.cache.chats.set(thread.thread_id, chat)
+                if (chat.pending) {
+                    this.cache.pendingChats.set(thread.thread_id, chat)
+                }
             })
 
             ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
