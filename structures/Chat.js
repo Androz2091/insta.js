@@ -9,9 +9,6 @@ module.exports = class Chat {
         this.messages = new Collection()
         this.users = new Collection()
         this.leftUsers = new Collection()
-
-        this._messagesSentPromises = new Collection()
-
         this._patch(data)
     }
 
