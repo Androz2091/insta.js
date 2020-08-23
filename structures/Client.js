@@ -62,35 +62,45 @@ module.exports = class InstaClient extends EventEmitter {
                     return
                 }
 
-                // Fetch the chat where the message was sent
-                const { threadID } = Util.parseMessagePath(rawMessage.data[0].path)
-                const chat = this.cache.chats.get(threadID)
+                rawMessage.data.forEach((data) => {
+                    // Emit right event
+                    switch (data.op) {
+                    case 'replace': {
+                        if (data.path.startsWith('/direct_v2/inbox/threads/')) {
+                            const threadID = data.path.substr('/direct_v2/inbox/threads/'.length, data.path.length)
+                            const chat = new Chat(this, threadID, JSON.parse(data.value))
+                            this.cache.chats.set(chat.id, chat)
+                        }
+                        break
+                    }
 
-                // Emit right event
-                switch (rawMessage.data[0].op) {
-                case 'replace': {
-                    // const messagePayload = JSON.parse(rawMessage.data[0].value)
-                    break
-                }
+                    case 'add': {
+                        // Fetch the chat where the message was sent
+                        const { threadID } = Util.parseMessagePath(data.path)
+                        const chat = this.cache.chats.get(threadID)
+                        // Create a new message
+                        const messagePayload = JSON.parse(data.value)
+                        const message = new Message(this, threadID, messagePayload)
+                        chat.messages.set(message.id, message)
+                        this.emit('messageCreate', message)
+                        break
+                    }
 
-                case 'add': {
-                    const messagePayload = JSON.parse(rawMessage.data[0].value)
-                    const message = new Message(this, threadID, messagePayload)
-                    chat.messages.set(message.id, message)
-                    this.emit('messageCreate', message)
-                    break
-                }
+                    case 'remove': {
+                        // Fetch the chat where the message was sent
+                        const { threadID } = Util.parseMessagePath(data.path)
+                        const chat = this.cache.chats.get(threadID)
+                        // Emit message delete event
+                        const messageID = data.value
+                        const existing = chat.messages.get(messageID)
+                        this.emit('messageDelete', existing)
+                        break
+                    }
 
-                case 'remove': {
-                    const messageID = rawMessage.data[0].value
-                    const existing = this.cache.messages.get(messageID)
-                    this.emit('messageDelete', existing)
-                    break
-                }
-
-                default:
-                    break
-                }
+                    default:
+                        break
+                    }
+                })
             })
         }
     }
