@@ -67,7 +67,6 @@ module.exports = class Chat {
     sendMessage (content) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
-                console.log(itemID)
                 resolve(this.messages.get(itemID))
             })
         })
