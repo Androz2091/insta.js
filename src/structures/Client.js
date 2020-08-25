@@ -9,6 +9,7 @@ const Util = require('../utils/Util')
 const ClientUser = require('./ClientUser')
 const Message = require('./Message')
 const Chat = require('./Chat')
+const User = require('./User')
 
 module.exports = class InstaClient extends EventEmitter {
     constructor () {
@@ -23,6 +24,18 @@ module.exports = class InstaClient extends EventEmitter {
             chats: new Collection(),
             pendingChats: new Collection()
         }
+    }
+
+    async fetchUser (query, cache, force) {
+        const userID = Util.isID(query) ? query : await this.ig.user.getIdByUsername(query)
+        const userPayload = await this.ig.user.info(userID)
+        if (!this.cache.users.has(userID)) {
+            const user = new User(this, userPayload)
+            this.cache.users.set(userID, user)
+        } else {
+            this.cache.users.get(userID)._patch(userPayload)
+        }
+        return this.cache.users.get(userID)
     }
 
     handleReceive (topic, payload) {

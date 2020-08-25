@@ -6,4 +6,8 @@ module.exports = class Util {
             itemID
         }
     }
+
+    static isID (query) {
+        return !isNaN(query)
+    }
 }
