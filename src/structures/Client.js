@@ -81,47 +81,47 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
-    login (username, password) {
+    async login (username, password, state) {
         const ig = withRealtime(new IgApiClient())
         ig.state.generateDevice(username)
-        ig.account.login(username, password).then(async (response) => {
-            this.user = new ClientUser(this, response)
-            this.emit('debug', 'logged', this.user)
+        if (state) {
+            await ig.importState(state)
+        }
+        const response = await ig.account.login(username, password)
+        this.user = new ClientUser(this, response)
+        this.emit('debug', 'logged', this.user)
 
-            const threads = [
-                ...await ig.feed.directInbox().items(),
-                ...await ig.feed.directPending().items()
-            ]
-            threads.forEach((thread) => {
-                const chat = new Chat(this, thread.thread_id, thread)
-                this.cache.chats.set(thread.thread_id, chat)
-                if (chat.pending) {
-                    this.cache.pendingChats.set(thread.thread_id, chat)
-                }
-            })
-
-            ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
-            ig.realtime.on('error', console.error)
-            ig.realtime.on('close', () => console.error('RealtimeClient closed'))
-
-            await ig.realtime.connect({
-                graphQlSubs: [
-                ],
-                skywalkerSubs: [
-                ],
-                irisData: await ig.feed.directInbox().request(),
-                connectOverrides: {
-                }
-            })
-            ig.realtime.direct.sendForegroundState({
-                inForegroundApp: true,
-                inForegroundDevice: true,
-                keepAliveTimeout: 60
-            })
-            this.ig = ig
-            this.emit('connected')
-        }).catch((e) => {
-            throw e
+        const threads = [
+            ...await ig.feed.directInbox().items(),
+            ...await ig.feed.directPending().items()
+        ]
+        threads.forEach((thread) => {
+            const chat = new Chat(this, thread.thread_id, thread)
+            this.cache.chats.set(thread.thread_id, chat)
+            if (chat.pending) {
+                this.cache.pendingChats.set(thread.thread_id, chat)
+            }
         })
+
+        ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
+        ig.realtime.on('error', console.error)
+        ig.realtime.on('close', () => console.error('RealtimeClient closed'))
+
+        await ig.realtime.connect({
+            graphQlSubs: [
+            ],
+            skywalkerSubs: [
+            ],
+            irisData: await ig.feed.directInbox().request(),
+            connectOverrides: {
+            }
+        })
+        ig.realtime.direct.sendForegroundState({
+            inForegroundApp: true,
+            inForegroundDevice: true,
+            keepAliveTimeout: 60
+        })
+        this.ig = ig
+        this.emit('connected')
     }
 }
