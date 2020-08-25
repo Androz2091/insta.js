@@ -35,6 +35,10 @@ client.on('newFollower', (user) => {
     user.follow();
 });
 
+client.on('followRequest', (user) => {
+    user.approveFollow();
+});
+
 client.login('username', 'password');
 ```
 

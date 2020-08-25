@@ -102,6 +102,10 @@ module.exports = class InstaClient extends EventEmitter {
             const user = await this.fetchUser(data.sourceUserId)
             this.emit('newFollower', user)
         }
+        if (data.pushCategory === 'private_user_follow_request') {
+            const user = await this.fetchUser(data.sourceUserId)
+            this.emit('followRequest', user)
+        }
     }
 
     async login (username, password, state) {
