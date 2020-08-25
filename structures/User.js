@@ -46,4 +46,8 @@ module.exports = class User {
     send (content) {
         return this.thread.send(content)
     }
+    
+    toString () {
+        return this.id
+    }
 }
