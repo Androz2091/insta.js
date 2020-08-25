@@ -53,7 +53,7 @@ module.exports = class Chat {
     async approve () {
         this.pending = false
         await this.client.ig.directThread.approve(this.id)
-        this.emit('messageCreate', this.messages.first())
+        this.client.emit('messageCreate', this.messages.first())
     }
 
     markMessageSeen (messageID) {

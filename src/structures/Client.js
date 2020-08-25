@@ -45,15 +45,6 @@ module.exports = class InstaClient extends EventEmitter {
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
-                // Handle new pending requests
-                if (!rawMessage.data[0] && rawMessage.mutation_token) {
-                    const newPendingThreads = await this.ig.feed.directPending().items()
-                    const chats = newPendingThreads.map((thread) => new Chat(this, thread.thread_id, thread))
-                    const pendingChat = chats.find((chat) => !this.cache.pendingChats.has(chat.id))
-                    this.emit('pendingRequest', pendingChat)
-                    return
-                }
-
                 rawMessage.data.forEach((data) => {
                     // Emit right event
                     switch (data.op) {
@@ -105,6 +96,20 @@ module.exports = class InstaClient extends EventEmitter {
         if (data.pushCategory === 'private_user_follow_request') {
             const user = await this.fetchUser(data.sourceUserId)
             this.emit('followRequest', user)
+        }
+        if (data.pushCategory === 'direct_v2_pending') {
+            if (!this.cache.pendingChats.get(data.actionParams.id)) {
+                const pendingRequests = await this.ig.feed.directPending().items()
+                pendingRequests.forEach((thread) => {
+                    const chat = new Chat(this, thread.thread_id, thread)
+                    this.cache.chats.set(thread.thread_id, chat)
+                    this.cache.pendingChats.set(thread.thread_id, chat)
+                })
+            }
+            const pendingChat = this.cache.pendingChats.get(data.actionParams.id)
+            if (pendingChat) {
+                this.emit('pendingRequest', pendingChat)
+            }
         }
     }
 

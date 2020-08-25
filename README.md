@@ -39,6 +39,10 @@ client.on('followRequest', (user) => {
     user.approveFollow();
 });
 
+client.on('pendingRequest', (chat) => {
+    chat.approve();
+});
+
 client.login('username', 'password');
 ```
 
