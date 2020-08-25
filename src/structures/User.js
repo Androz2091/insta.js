@@ -46,4 +46,8 @@ module.exports = class User {
     send (content) {
         return this.privateChat.send(content)
     }
+    
+    toString () {
+        return this.id
+    }
 }

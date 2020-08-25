@@ -33,4 +33,8 @@ module.exports = class Message {
     markSeen () {
         return this.chat.markMessageSeen(this.id)
     }
+    
+    toString () {
+        return this.content
+    }
 }
