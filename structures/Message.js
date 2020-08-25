@@ -23,14 +23,14 @@ module.exports = class Message {
     }
 
     delete () {
-        return this.chat.delete(this.id)
+        return this.chat.deleteMessage(this.id)
     }
 
     reply (content) {
-        return this.chat.send(content)
+        return this.chat.sendMessage(content)
     }
 
     markSeen () {
-        return this.chat.markSeen(this.id)
+        return this.chat.markMessageSeen(this.id)
     }
 }

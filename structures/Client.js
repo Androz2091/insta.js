@@ -6,10 +6,8 @@ const Collection = require('@discordjs/collection')
 
 const Util = require('../utils/Util')
 
-const User = require('./User')
 const ClientUser = require('./ClientUser')
 const Message = require('./Message')
-const DirectThread = require('./DirectThread')
 const Chat = require('./Chat')
 
 module.exports = class InstaClient extends EventEmitter {
@@ -27,29 +25,7 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
-    getDirectThread (threadID, data) {
-        const existing = this.cache.threads.get(threadID)
-        if (existing) return existing
-        if (!data.messages) data.messages = []
-        data.messages = [ ...data.messages, ...this.cache.messages.filter((m) => m.threadID === threadID).array() ]
-        const thread = new DirectThread(this, threadID, data)
-        this.cache.threads.set(threadID, thread)
-        return thread
-    }
-
-    getUser (userID) {
-        const existing = this.cache.users.get(userID)
-        if (existing) return existing
-        const user = new User(this, {
-            pk: userID
-        })
-        this.cache.users.set(userID, user)
-        return user
-    }
-
     handleReceive (topic, payload) {
-        console.log(topic, payload)
-
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
@@ -110,6 +86,7 @@ module.exports = class InstaClient extends EventEmitter {
         ig.state.generateDevice(username)
         ig.account.login(username, password).then(async (response) => {
             this.user = new ClientUser(this, response)
+            this.emit('debug', 'logged', this.user)
 
             const threads = [
                 ...await ig.feed.directInbox().items(),

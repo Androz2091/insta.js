@@ -46,8 +46,8 @@ module.exports = class Chat {
         this.isPin = data.is_pin
         this.named = data.named
         this.pending = data.pending
-        this.chatType = data.thread_type
         this.isGroup = data.is_group
+        this.type = data.thread_type
     }
 
     async approve () {
@@ -56,17 +56,18 @@ module.exports = class Chat {
         this.emit('messageCreate', this.messages.first())
     }
 
-    markSeen (messageID) {
+    markMessageSeen (messageID) {
         return this.threadEntity.markItemSeen(messageID)
     }
 
-    delete (messageID) {
+    deleteMessage (messageID) {
         return this.threadEntity.deleteItem(messageID)
     }
 
-    send (content) {
+    sendMessage (content) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
+                console.log(itemID)
                 resolve(this.messages.get(itemID))
             })
         })
