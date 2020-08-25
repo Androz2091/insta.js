@@ -30,6 +30,11 @@ client.on('messageDelete', (cachedMessage) => {
     console.log(`@${cachedMessage.author.username} has just deleted their message: ${cachedMessage.content}`);
 });
 
+// follow back everyone
+client.on('newFollower', (user) => {
+    user.follow();
+});
+
 client.login('username', 'password');
 ```
 

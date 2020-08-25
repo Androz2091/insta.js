@@ -1,4 +1,4 @@
-const { withRealtime } = require('instagram_mqtt')
+const { withRealtime, withFbns } = require('instagram_mqtt')
 // const { GraphQLSubscriptions, SkywalkerSubscriptions } = require('instagram_mqtt/dist/realtime/subscriptions')
 const { IgApiClient } = require('instagram-private-api')
 const { EventEmitter } = require('events')
@@ -28,17 +28,20 @@ module.exports = class InstaClient extends EventEmitter {
 
     async fetchUser (query, cache, force) {
         const userID = Util.isID(query) ? query : await this.ig.user.getIdByUsername(query)
-        const userPayload = await this.ig.user.info(userID)
         if (!this.cache.users.has(userID)) {
+            const userPayload = await this.ig.user.info(userID)
             const user = new User(this, userPayload)
             this.cache.users.set(userID, user)
         } else {
-            this.cache.users.get(userID)._patch(userPayload)
+            if (force) {
+                const userPayload = await this.ig.user.info(userID)
+                this.cache.users.get(userID)._patch(userPayload)
+            }
         }
         return this.cache.users.get(userID)
     }
 
-    handleReceive (topic, payload) {
+    handleRealtimeReceive (topic, payload) {
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
@@ -94,12 +97,20 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
+    async handleFbnsReceive (data) {
+        if (data.pushCategory === 'new_follower') {
+            const user = await this.fetchUser(data.sourceUserId)
+            this.emit('newFollower', user)
+        }
+    }
+
     async login (username, password, state) {
-        const ig = withRealtime(new IgApiClient())
+        const ig = withFbns(withRealtime(new IgApiClient()))
         ig.state.generateDevice(username)
         if (state) {
             await ig.importState(state)
         }
+        await ig.simulate.preLoginFlow()
         const response = await ig.account.login(username, password)
         this.user = new ClientUser(this, response)
         this.emit('debug', 'logged', this.user)
@@ -116,24 +127,20 @@ module.exports = class InstaClient extends EventEmitter {
             }
         })
 
-        ig.realtime.on('receive', (topic, messages) => this.handleReceive(topic, messages))
+        ig.realtime.on('receive', (topic, messages) => this.handleRealtimeReceive(topic, messages))
         ig.realtime.on('error', console.error)
         ig.realtime.on('close', () => console.error('RealtimeClient closed'))
 
         await ig.realtime.connect({
-            graphQlSubs: [
-            ],
-            skywalkerSubs: [
-            ],
-            irisData: await ig.feed.directInbox().request(),
-            connectOverrides: {
-            }
+            irisData: await ig.feed.directInbox().request()
         })
-        ig.realtime.direct.sendForegroundState({
-            inForegroundApp: true,
-            inForegroundDevice: true,
-            keepAliveTimeout: 60
+
+        ig.fbns.push$.subscribe((data) => this.handleFbnsReceive(data))
+
+        await ig.fbns.connect({
+            autoReconnect: true
         })
+
         this.ig = ig
         this.emit('connected')
     }

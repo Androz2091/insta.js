@@ -43,6 +43,34 @@ module.exports = class User {
         this.can_link_entities_in_bio = data.can_link_entities_in_bio
     }
 
+    async follow () {
+        await this.client.ig.friendship.create(this.id)
+    }
+
+    async unfollow () {
+        await this.client.ig.friendship.destroy(this.id)
+    }
+
+    async block () {
+        await this.client.ig.friendship.block(this.id)
+    }
+
+    async unblock () {
+        await this.client.ig.friendship.unblock(this.id)
+    }
+
+    async approveFollow () {
+        await this.client.ig.friendship.approve(this.id)
+    }
+
+    async denyFollow () {
+        await this.client.ig.friendship.deny(this.id)
+    }
+
+    async removeFollower () {
+        await this.client.ig.friendship.removeFollower(this.id)
+    }
+
     send (content) {
         return this.privateChat.send(content)
     }
