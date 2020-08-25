@@ -9,6 +9,10 @@ module.exports = class Message {
         return this.client.cache.chats.get(this.threadID)
     }
 
+    get author () {
+        return this.client.cache.users.get(this.authorID)
+    }
+
     _patch (data) {
         this.id = data.item_id
         this.type = data.item_type
