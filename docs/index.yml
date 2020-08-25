@@ -1,4 +1,0 @@
-- name: Examples
-  files:
-    - name: Ping
-      path: ping.js
