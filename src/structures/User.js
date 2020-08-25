@@ -4,8 +4,8 @@ module.exports = class User {
         this._patch(data)
     }
 
-    get thread () {
-        return this.client.cache.threads.find((thread) => thread.userID === this.id)
+    get privateChat () {
+        return this.client.cache.chats.find((chat) => chat.users.size === 1 && chat.users[0].id === this.id)
     }
 
     _patch (data) {
@@ -44,6 +44,6 @@ module.exports = class User {
     }
 
     send (content) {
-        return this.thread.send(content)
+        return this.privateChat.send(content)
     }
 }
