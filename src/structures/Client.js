@@ -14,19 +14,56 @@ const User = require('./User')
 module.exports = class InstaClient extends EventEmitter {
     constructor () {
         super()
-        this.username = null
+        /**
+         * @type {ClientUser}
+         * The bot's user object.
+         */
+        this.user = null
+        /**
+         * @type {IgApiClient}
+         */
         this.ig = null
-        this.logged = false
+        /**
+         * @type {boolean}
+         * Whether the bot is connected and ready.
+         */
+        this.ready = false
 
+        /**
+         * @type {Object}
+         * The bot's cache.
+         */
         this.cache = {
+            /**
+             * @type {Collection<string, Message>}
+             * The bot's messages cache.
+             */
             messages: new Collection(),
+            /**
+             * @type {Collection<string, User>}
+             * The bot's users cache.
+             */
             users: new Collection(),
+            /**
+             * @type {Collection<string, Chat>}
+             * The bot's chats cache.
+             */
             chats: new Collection(),
+            /**
+             * @type {Collection<string, Chat>}
+             * The bot's pending chats cache.
+             */
             pendingChats: new Collection()
         }
     }
 
-    async fetchUser (query, cache, force) {
+    /**
+     * Fetch a user and cache it.
+     * @param {string} query The ID or the username of the user to fetch.
+     * @param {boolean} [force=false] Whether the cache should be ignored
+     * @returns {User}
+     */
+    async fetchUser (query, force) {
         const userID = Util.isID(query) ? query : await this.ig.user.getIdByUsername(query)
         if (!this.cache.users.has(userID)) {
             const userPayload = await this.ig.user.info(userID)
@@ -41,6 +78,12 @@ module.exports = class InstaClient extends EventEmitter {
         return this.cache.users.get(userID)
     }
 
+    /**
+     * Handle Realtime messages
+     * @param {object} topic
+     * @param {object} payload
+     * @private
+     */
     handleRealtimeReceive (topic, payload) {
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
@@ -88,7 +131,13 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
+    /**
+     * Handle FBNS messages
+     * @param {object} data
+     * @private
+     */
     async handleFbnsReceive (data) {
+        console.log(data)
         if (data.pushCategory === 'new_follower') {
             const user = await this.fetchUser(data.sourceUserId)
             this.emit('newFollower', user)
@@ -113,6 +162,12 @@ module.exports = class InstaClient extends EventEmitter {
         }
     }
 
+    /**
+     * Log the bot in to Instagram
+     * @param {string} username The username of the Instagram account.
+     * @param {string} password The password of the Instagram account.
+     * @param {object} [state] Optional state object. It can be generated using client.ig.exportState().
+     */
     async login (username, password, state) {
         const ig = withFbns(withRealtime(new IgApiClient()))
         ig.state.generateDevice(username)
@@ -151,6 +206,7 @@ module.exports = class InstaClient extends EventEmitter {
         })
 
         this.ig = ig
+        this.ready = true
         this.emit('connected')
     }
 }
