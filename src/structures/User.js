@@ -1,5 +1,16 @@
-module.exports = class User {
+/**
+ * Represents a User
+ */
+class User {
+    /**
+     * @param {InstaClient} client
+     * @param {object} data
+     */
     constructor (client, data) {
+        /**
+         * @type {InstaClient}
+         * The client that instantiated this
+         */
         this.client = client
         this._patch(data)
     }
@@ -43,34 +54,67 @@ module.exports = class User {
         this.can_link_entities_in_bio = data.can_link_entities_in_bio
     }
 
+    /**
+     * Start following a user
+     * @returns {Promise<void>}
+     */
     async follow () {
         await this.client.ig.friendship.create(this.id)
     }
 
+    /**
+     * Stop following a user
+     * @returns {Promise<void>}
+     */
     async unfollow () {
         await this.client.ig.friendship.destroy(this.id)
     }
 
+    /**
+     * Block a user
+     * @returns {Promise<void>}
+     */
     async block () {
         await this.client.ig.friendship.block(this.id)
     }
 
+    /**
+     * Unblock a user
+     * @returns {Promise<void>}
+     */
     async unblock () {
         await this.client.ig.friendship.unblock(this.id)
     }
 
+    /**
+     * Approve follow request
+     * @returns {Promise<void>}
+     */
     async approveFollow () {
         await this.client.ig.friendship.approve(this.id)
     }
 
+    /**
+     * Reject follow request
+     * @returns {Promise<void>}
+     */
     async denyFollow () {
         await this.client.ig.friendship.deny(this.id)
     }
 
+    /**
+     * Remove the user from your followers
+     * @returns {Promise<void>}
+     */
     async removeFollower () {
         await this.client.ig.friendship.removeFollower(this.id)
     }
 
+    /**
+     * Send a message to the user
+     * @param {string} content The content of the message to send
+     * @returns {Promise<Message>}
+     */
     send (content) {
         return this.privateChat.send(content)
     }
@@ -79,3 +123,5 @@ module.exports = class User {
         return this.id
     }
 }
+
+module.exports = User

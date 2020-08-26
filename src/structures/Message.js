@@ -1,23 +1,67 @@
-module.exports = class Message {
+/**
+ * Represents a Message
+ */
+class Message {
+    /**
+     * @param {InstaClient} client
+     * @param {string} threadID
+     * @param {object} data
+     */
     constructor (client, threadID, data) {
+        /**
+         * @type {InstaClient}
+         * The client that instantiated this
+         */
         this.client = client
-        this.threadID = threadID
+        /**
+         * @type {string}
+         * The ID of the chat the message was sent in
+         */
+        this.chatID = threadID
         this._patch(data)
     }
 
+    /**
+     * @type {Chat}
+     * The chat the message was sent in
+     */
     get chat () {
         return this.client.cache.chats.get(this.threadID)
     }
 
+    /**
+     * @type {User}
+     * The author of the message
+     */
     get author () {
         return this.client.cache.users.get(this.authorID)
     }
 
     _patch (data) {
+        /**
+         * @type {string}
+         * The ID of the message
+         */
         this.id = data.item_id
+        /**
+         * @type {string}
+         * The type of the message
+         */
         this.type = data.item_type
+        /**
+         * @type {number}
+         * The timestamp the message was sent at
+         */
         this.timestamp = data.timestamp
+        /**
+         * @type {string}
+         * The ID of the user who sent the message
+         */
         this.authorID = data.user_id
+        /**
+         * @type {string}
+         * The content of the message
+         */
         if ('text' in data) {
             this.content = data.text
         }
@@ -26,19 +70,34 @@ module.exports = class Message {
         }
     }
 
+    /**
+     * Mark the message as seen.
+     * @returns {Promise<void>}
+     */
+    markSeen () {
+        return this.chat.markMessageSeen(this.id)
+    }
+
+    /**
+     * Delete the message
+     * @returns {Promise<void>}
+     */
     delete () {
         return this.chat.deleteMessage(this.id)
     }
 
+    /**
+     * Reply to the message
+     * @param {string} content The content of the message
+     * @returns {Promise<void>}
+     */
     reply (content) {
         return this.chat.sendMessage(content)
-    }
-
-    markSeen () {
-        return this.chat.markMessageSeen(this.id)
     }
 
     toString () {
         return this.content
     }
 }
+
+module.exports = Message

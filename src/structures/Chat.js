@@ -2,12 +2,40 @@ const Collection = require('@discordjs/collection')
 const Message = require('./Message')
 const User = require('./User')
 
-module.exports = class Chat {
+/**
+ * Represents a chat between one or more users.
+ */
+class Chat {
+    /**
+     * @param {InstaClient} client
+     * @param {string} threadID
+     * @param {object} data
+     */
     constructor (client, threadID, data) {
+        /**
+         * @type {InstaClient}
+         * The client that instantiated this
+         */
         this.client = client
+        /**
+         * @type {string}
+         * The ID of the chat
+         */
         this.id = threadID
+        /**
+         * @type {Collection<string, Message>}
+         * The messages in the chat.
+         */
         this.messages = new Collection()
+        /**
+         * @type {Collection<string, User>}
+         * The users in the chat.
+         */
         this.users = new Collection()
+        /**
+         * @type {Collection<string, User>}
+         * The users that left the chat.
+         */
         this.leftUsers = new Collection()
         this._patch(data)
     }
@@ -40,30 +68,81 @@ module.exports = class Chat {
         data.items.forEach((item) => {
             this.messages.set(item.item_id, new Message(this.client, this.id, item))
         })
+        /**
+         * @type {string[]}
+         * The IDs of the administrators of the chat.
+         */
         this.adminUserIDs = []
+        /**
+         * @type {number}
+         * The last time the chat was active.
+         */
         this.lastActivityAt = data.last_activity_at
+        /**
+         * @type {boolean}
+         * Whether the account has muted the chat.
+         */
         this.muted = data.muted
+        /**
+         * @type {boolean}
+         * Whether the account has pinned the chat.
+         */
         this.isPin = data.is_pin
+        /**
+         * @type {boolean}
+         * Whether this chat has a specific name (otherwise it's the default name).
+         */
         this.named = data.named
+        /**
+         * @type {boolean}
+         * Whether the chat is waiting for the account approval.
+         */
         this.pending = data.pending
+        /**
+         * @type {boolean}
+         * Whether the chat is a group.
+         */
         this.isGroup = data.is_group
+        /**
+         * @type {boolean}
+         * The type of the chat.
+         */
         this.type = data.thread_type
     }
 
+    /**
+     * Approve the chat if it's pending.
+     * @returns {Promise<void>}
+     */
     async approve () {
         this.pending = false
         await this.client.ig.directThread.approve(this.id)
         this.client.emit('messageCreate', this.messages.first())
     }
 
-    markMessageSeen (messageID) {
-        return this.threadEntity.markItemSeen(messageID)
+    /**
+     * Mark a message of the chat as seen
+     * @param {string} messageID The ID of the message to mark as seen
+     * @returns {Promise<void>}
+     */
+    async markMessageSeen (messageID) {
+        await this.threadEntity.markItemSeen(messageID)
     }
 
-    deleteMessage (messageID) {
-        return this.threadEntity.deleteItem(messageID)
+    /**
+     * Delete a message of the chat
+     * @param {string} messageID The ID of the message to delete
+     * @returns {Promise<void>}
+     */
+    async deleteMessage (messageID) {
+        await this.threadEntity.deleteItem(messageID)
     }
 
+    /**
+     * Send a message in the chat
+     * @param {string} content The content of the message to send
+     * @returns {Promise<Message>}
+     */
     sendMessage (content) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
@@ -72,3 +151,5 @@ module.exports = class Chat {
         })
     }
 }
+
+module.exports = Chat
