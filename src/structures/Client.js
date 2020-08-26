@@ -11,7 +11,11 @@ const Message = require('./Message')
 const Chat = require('./Chat')
 const User = require('./User')
 
-module.exports = class InstaClient extends EventEmitter {
+/**
+ * InstaClient, the main hub for interacting with the Instagram API.
+ * @extends {EventEmitter}
+ */
+class InstaClient extends EventEmitter {
     constructor () {
         super()
         /**
@@ -30,29 +34,20 @@ module.exports = class InstaClient extends EventEmitter {
         this.ready = false
 
         /**
-         * @type {Object}
+         * @typedef {Object} Cache
+         * @property {Collection<string, Message>} messages The bot's messages cache.
+         * @property {Collection<string, User>} users The bot's users cache.
+         * @property {Collection<string, Chat>} chats The bot's chats cache.
+         * @property {Collection<string, Chat>} pendingChats The bot's pending chats cache.
+         */
+        /**
+         * @type {Cache}
          * The bot's cache.
          */
         this.cache = {
-            /**
-             * @type {Collection<string, Message>}
-             * The bot's messages cache.
-             */
             messages: new Collection(),
-            /**
-             * @type {Collection<string, User>}
-             * The bot's users cache.
-             */
             users: new Collection(),
-            /**
-             * @type {Collection<string, Chat>}
-             * The bot's chats cache.
-             */
             chats: new Collection(),
-            /**
-             * @type {Collection<string, Chat>}
-             * The bot's pending chats cache.
-             */
             pendingChats: new Collection()
         }
     }
@@ -210,3 +205,5 @@ module.exports = class InstaClient extends EventEmitter {
         this.emit('connected')
     }
 }
+
+module.exports = InstaClient
