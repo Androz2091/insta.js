@@ -26,6 +26,15 @@ class ClientUser extends User {
          */
         this.phoneNumber = data.phoneNumber
     }
+
+    get follow () { return undefined }
+    get unfollow () { return undefined }
+    get block () { return undefined }
+    get unblock () { return undefined }
+    get approveFollow () { return undefined }
+    get denyFollow () { return undefined }
+    get removeFollower () { return undefined }
+    get send () { return undefined }
 }
 
 module.exports = ClientUser
