@@ -172,7 +172,11 @@ class InstaClient extends EventEmitter {
         }
         await ig.simulate.preLoginFlow()
         const response = await ig.account.login(username, password)
-        this.user = new ClientUser(this, response)
+        const userData = await ig.user.info(response.username)
+        this.user = new ClientUser(this, {
+            ...response,
+            ...userData
+        })
         this.emit('debug', 'logged', this.user)
 
         const threads = [
