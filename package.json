@@ -20,6 +20,7 @@
     "instagram_mqtt": "^0.2.16"
   },
   "devDependencies": {
+    "discord.js-docgen": "discordjs/docgen",
     "eslint": "^7.7.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
