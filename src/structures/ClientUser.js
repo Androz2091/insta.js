@@ -15,6 +15,7 @@ class ClientUser extends User {
     }
 
     _patch (data) {
+        super._patch(data)
         /**
          * @type {boolean}
          * Whether the user has enabled contact synchronization
