@@ -25,6 +25,7 @@ class InstaClient extends EventEmitter {
         this.user = null
         /**
          * @type {IgApiClient}
+         * @private
          */
         this.ig = null
         /**
