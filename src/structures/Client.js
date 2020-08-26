@@ -51,6 +51,8 @@ class InstaClient extends EventEmitter {
             chats: new Collection(),
             pendingChats: new Collection()
         }
+
+        this.eventsToReplay = []
     }
 
     /**
@@ -81,6 +83,14 @@ class InstaClient extends EventEmitter {
      * @private
      */
     handleRealtimeReceive (topic, payload) {
+        if (!this.ready) {
+            this.eventsToReplay.push([
+                'realtime',
+                topic,
+                payload
+            ])
+            return
+        }
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
@@ -133,7 +143,13 @@ class InstaClient extends EventEmitter {
      * @private
      */
     async handleFbnsReceive (data) {
-        console.log(data)
+        if (!this.ready) {
+            this.eventsToReplay.push([
+                'fbns',
+                data
+            ])
+            return
+        }
         if (data.pushCategory === 'new_follower') {
             const user = await this.fetchUser(data.sourceUserId)
             this.emit('newFollower', user)
@@ -208,6 +224,14 @@ class InstaClient extends EventEmitter {
         this.ig = ig
         this.ready = true
         this.emit('connected')
+        this.eventsToReplay.forEach((event) => {
+            const eventType = event.shift()
+            if (eventType === 'realtime') {
+                this.handleRealtimeReceive(...event)
+            } else if (eventType === 'fbns') {
+                this.handleFbnsReceive(...event)
+            }
+        })
     }
 }
 
