@@ -217,46 +217,28 @@ module.exports = InstaClient
  * Emitted when a message is sent in a chat the bot is in
  * @event InstaClient#messageCreate
  * @param {Message} message The message that was sent
- * client.on('messageCreate', (message) => {
- *   if(message.content === '!ping'){
- *     message.reply('pong!');
- *   }
- * });
  */
 
 /**
  * Emitted when a message is deleted in a chat the bot is in
  * @event InstaClient#messageDelete
  * @param {Message} message The message that was deleted
- * client.on('messageDelete', (message) => {
- *   console.log(message.id + " from @" + message.author.username + " was deleted.");
- * });
  */
 
 /**
  * Emitted when someone starts following the bot
  * @event InstaClient#newFollower
  * @param {User} user The user that started following the bot
- * client.on('followRequest', (user) => {
- *   user.follow(); // automatically follow back
- * });
  */
 
 /**
  * Emitted when someone wants to follow the bot
  * @event InstaClient#followRequest
  * @param {User} user The user who wants to follow the bot
- * client.on('followRequest', (user) => {
- *   user.approveFollow(); // automatically approve the request
- * });
  */
 
 /**
  * Emitted when someone wants to send a message to the bot
  * @event InstaClient#pendingRequest
  * @param {Chat} chat The chat that needs to be approved
- * @example
- * client.on('pendingRequest', (chat) => {
- *   chat.approve(); // automatically approve the request
- * });
  */
