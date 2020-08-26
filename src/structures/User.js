@@ -20,38 +20,66 @@ class User {
     }
 
     _patch (data) {
+        /**
+         * @type {string}
+         * The ID of the user
+         */
         this.id = data.pk
+        /**
+         * @type {string}
+         * The username of the user
+         */
         this.username = data.username
+        /**
+         * @type {string}
+         * The full name of the user
+         */
         this.fullName = data.full_name
-        this.isPrivate = data.is_private
-        this.profilePictureURL = data.profile_pic_url
-        this.profilePictureID = data.profile_pic_id
-        this.isVerified = data.is_verified
-        this.hasAnonymousProfilePicture = data.has_anonymous_profile_picture
-        this.canBoostPost = data.can_boost_post
-        this.isBusiness = data.is_business
-        this.accountType = data.account_type
-        this.professionalConversionSuggestedAccountType = data.professional_conversion_suggested_account_type
-        this.isCallToActionEnabled = data.is_call_to_action_enabled
-        this.canSeeOrganicInsights = data.can_see_organic_insights
-        this.showInsightsTerms = data.show_insights_terms
-        this.totalIGTVVideos = data.total_igtv_videos
-        this.reelAutoArchive = data.reel_auto_archive
-        this.hasPlacedOrders = data.has_placed_orders
-        this.allowedCommenterType = data.allowed_commenter_type
-        this.nametag = data.nametag
-        this.isUsingUnifiedInboxForDirect = data.is_using_unified_inbox_for_direct
-        this.interopMessagingUserFbid = data.interop_messaging_user_fbid
-        this.canSeePrimaryCountryInSettings = data.can_see_primary_country_in_settings
-        this.accountBadges = data.account_badges
-        this.allowContactsSync = data.allow_contacts_sync
-        this.phoneNumber = data.phone_number
-        this.media_count = data.media_count
-        this.follower_count = data.follower_count
-        this.following_count = data.following_count
-        this.following_tag_count = data.following_tag_count
+        /**
+         * @type {string}
+         * The biography of the user
+         */
         this.biography = data.biography
-        this.can_link_entities_in_bio = data.can_link_entities_in_bio
+        /**
+         * @type {boolean}
+         * Whether the user is private
+         */
+        this.isPrivate = data.is_private
+        /**
+         * @type {boolean}
+         * Whether the user is verified
+         */
+        this.isVerified = data.is_verified
+        /**
+         * @type {boolean}
+         * Whether the user is a business profile
+         */
+        this.isBusiness = data.is_business
+        /**
+         * @type {number}
+         * The number of media published by the user
+         */
+        this.mediaCount = data.media_count
+        /**
+         * @type {string}
+         * The URL of the user's avatar
+         */
+        this.avatarURL = data.profile_pic_url
+        /**
+         * @type {number}
+         * The number of followers of the user
+         */
+        this.followerCount = data.follower_count
+        /**
+         * @type {number}
+         * The number of followed users by the user
+         */
+        this.followingCount = data.following_count
+        /**
+         * @type {number}
+         * The number of videos published by IGTV
+         */
+        this.totalIgtvVideos = data.total_igtv_videos
     }
 
     /**
