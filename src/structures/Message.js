@@ -26,7 +26,7 @@ class Message {
      * The chat the message was sent in
      */
     get chat () {
-        return this.client.cache.chats.get(this.threadID)
+        return this.client.cache.chats.get(this.chatID)
     }
 
     /**
