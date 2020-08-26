@@ -89,7 +89,7 @@ class Message {
     /**
      * Reply to the message
      * @param {string} content The content of the message
-     * @returns {Promise<void>}
+     * @returns {Promise<Message>}
      */
     reply (content) {
         return this.chat.sendMessage(content)
