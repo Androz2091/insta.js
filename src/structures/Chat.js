@@ -1,4 +1,5 @@
 const Collection = require('@discordjs/collection')
+const Jimp = require('jimp')
 const Message = require('./Message')
 const User = require('./User')
 
@@ -143,10 +144,27 @@ class Chat {
      * @param {string} content The content of the message to send
      * @returns {Promise<Message>}
      */
-    sendMessage (content) {
+    sendMessage (content, options) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
                 resolve(this.messages.get(itemID))
+            })
+        })
+    }
+
+    /**
+     * Send a photo in the chat
+     * @param {Buffer} file The photo to send
+     * @returns {Promise<Message>}
+     */
+    sendPhoto (file) {
+        return new Promise((resolve) => {
+            Jimp.read(file).then((image) => {
+                image.getBufferAsync(Jimp.MIME_JPEG).then((JpegBuffer) => {
+                    this.threadEntity.broadcastPhoto({ file: JpegBuffer }).then(({ item_id: itemID }) => {
+                        resolve(this.messages.get(itemID))
+                    })
+                })
             })
         })
     }
