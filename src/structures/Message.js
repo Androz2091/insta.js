@@ -3,9 +3,9 @@
  */
 class Message {
     /**
-     * @param {InstaClient} client
-     * @param {string} threadID
-     * @param {object} data
+     * @param {InstaClient} client The instantiating client
+     * @param {string} threadID The ID of the thread
+     * @param {object} data The data for the message
      */
     constructor (client, threadID, data) {
         /**

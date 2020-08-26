@@ -7,9 +7,9 @@ const User = require('./User')
  */
 class Chat {
     /**
-     * @param {InstaClient} client
-     * @param {string} threadID
-     * @param {object} data
+     * @param {InstaClient} client The instantiating client
+     * @param {string} threadID The ID of the thread
+     * @param {object} data The data for the chat
      */
     constructor (client, threadID, data) {
         /**

@@ -3,8 +3,8 @@
  */
 class User {
     /**
-     * @param {InstaClient} client
-     * @param {object} data
+     * @param {InstaClient} client The instantiating client
+     * @param {object} data The data for the user
      */
     constructor (client, data) {
         /**
