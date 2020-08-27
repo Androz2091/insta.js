@@ -15,7 +15,7 @@ const User = require('./User')
  * InstaClient, the main hub for interacting with the Instagram API.
  * @extends {EventEmitter}
  */
-class InstaClient extends EventEmitter {
+class Client extends EventEmitter {
     constructor () {
         super()
         /**
@@ -236,7 +236,7 @@ class InstaClient extends EventEmitter {
     }
 }
 
-module.exports = InstaClient
+module.exports = Client
 
 /**
  * Emitted when a message is sent in a chat the bot is in
