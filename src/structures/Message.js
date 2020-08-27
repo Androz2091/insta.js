@@ -68,6 +68,11 @@ class Message {
         if (this.type === 'link') {
             this.content = data.link.text
         }
+
+        if (this.chat && this.chat._sentMessagesPromises.has(this.id)) {
+            this.chat._sentMessagesPromises.get(this.id)(this)
+            this.chat._sentMessagesPromises.delete(this.id)
+        }
     }
 
     /**

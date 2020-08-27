@@ -38,6 +38,9 @@ class Chat {
          * The users that left the chat.
          */
         this.leftUsers = new Collection()
+
+        this._sentMessagesPromises = new Collection()
+
         this._patch(data)
     }
 
@@ -147,7 +150,11 @@ class Chat {
     sendMessage (content, options) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
-                resolve(this.messages.get(itemID))
+                this._sentMessagesPromises.set(itemID, resolve)
+                if (this.messages.has(itemID)) {
+                    this._sentMessagesPromises.delete(itemID)
+                    resolve(this.messages.get(itemID))
+                }
             })
         })
     }
