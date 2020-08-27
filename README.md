@@ -21,7 +21,7 @@ client.on('messageCreate', (message) => {
     message.markSeen();
 
     if (message.content === '!ping') {
-        message.chat.send('!pong');
+        message.reply('!pong');
     }
 });
 
