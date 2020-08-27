@@ -48,7 +48,7 @@ client.login('username', 'password');
 
 ## Links
 
-* [Website] (https://insta.js.org)
+* [Website](https://insta.js.org)
 * [Documentation](https://insta.js.org/#/docs)
 * [Insta.js Discord server](https://discord.gg/hw87VUQ)
 * [GitHub](https://github.com/Androz2091/insta.js)
