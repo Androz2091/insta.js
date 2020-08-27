@@ -169,7 +169,11 @@ class Chat {
             Jimp.read(file).then((image) => {
                 image.getBufferAsync(Jimp.MIME_JPEG).then((JpegBuffer) => {
                     this.threadEntity.broadcastPhoto({ file: JpegBuffer }).then(({ item_id: itemID }) => {
-                        resolve(this.messages.get(itemID))
+                        this._sentMessagesPromises.set(itemID, resolve)
+                        if (this.messages.has(itemID)) {
+                            this._sentMessagesPromises.delete(itemID)
+                            resolve(this.messages.get(itemID))
+                        }
                     })
                 })
             })
