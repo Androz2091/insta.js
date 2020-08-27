@@ -193,6 +193,7 @@ class InstaClient extends EventEmitter {
             ...response,
             ...userData
         })
+        this.cache.users.set(this.user.id, this.user)
         this.emit('debug', 'logged', this.user)
 
         const threads = [
