@@ -46,10 +46,13 @@ client.on('pendingRequest', (chat) => {
 client.login('username', 'password');
 ```
 
-## To do
+## Links
 
-* Improve `User` and `ClientUser` classes by supporting all the properties sent by the API
-* Add `seen` property to `Message` class.
+* [Website] (https://insta.js.org)
+* [Documentation](https://insta.js.org/#/docs)
+* [Insta.js Discord server](https://discord.gg/hw87VUQ)
+* [GitHub](https://github.com/Androz2091/insta.js)
+* [NPM](https://www.npmjs.com/@androz2091/insta.js)
 
 ## Credits
 
