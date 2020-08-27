@@ -15,6 +15,10 @@ class User {
         this._patch(data)
     }
 
+    /**
+     * @type {Chat}
+     * Private chat between the client and the user.
+     */
     get privateChat () {
         return this.client.cache.chats.find((chat) => chat.users.size === 1 && chat.users.first().id === this.id)
     }
