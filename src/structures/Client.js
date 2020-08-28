@@ -62,7 +62,7 @@ class InstaClient extends EventEmitter {
      * @returns {Promise<Chat>}
      *
      * @example
-     * client.fetchChat(340282366841710300949128114477310087639).then((chat) => {
+     * client.fetchChat('340282366841710300949128114477310087639').then((chat) => {
      *   chat.send('Hey!');
      * });
      */
