@@ -76,7 +76,7 @@ module.exports = MessageCollector
 /**
  * Emitted when a message is collected by the collector
  * @event MessageCollector#message
- * @param {Message} message
+ * @param {Message} message The collected message
  */
 
 /**
