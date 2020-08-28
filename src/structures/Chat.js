@@ -157,7 +157,7 @@ class Chat {
                 threadId: this.id,
                 isActive: true
             })
-        } else if (this._keepTypingAliveInterval) clearTimeout(this._keepTypingAliveInterval)
+        } else if (this._keepTypingAliveInterval) clearInterval(this._keepTypingAliveInterval)
     }
 
     /**
