@@ -168,7 +168,6 @@ class Chat {
      * @returns {Promise<Message>}
      * 
      * @example
-     * const fs = require('fs');
      * const ytdl = require('ytdl-core');
      * 
      * const stream = ytdl('http://www.youtube.com/watch?v=A02s8omM_hI', { filter: format => format.container === 'mp4' });
