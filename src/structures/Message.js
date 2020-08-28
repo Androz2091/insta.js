@@ -30,6 +30,7 @@ class Message {
          * The type of the message, either:
          * * `text` - a simple message
          * * `media` - a photo or a file
+         * * `like` - a like
          */
         this.type = data.item_type === 'link' ? 'text' : data.item_type
         /**
