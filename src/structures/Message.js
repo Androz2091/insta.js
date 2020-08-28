@@ -27,9 +27,11 @@ class Message {
         this.chatID = threadID
         /**
          * @type {string}
-         * The type of the message
+         * The type of the message, either:
+         * * `text` - a simple message
+         * * `media` - a photo or a file
          */
-        this.type = data.item_type
+        this.type = data.item_type === 'link' ? 'text' : data.item_type
         /**
          * @type {number}
          * The timestamp the message was sent at
@@ -41,15 +43,20 @@ class Message {
          */
         this.authorID = data.user_id
         /**
-         * @type {string}
+         * @type {string?}
          * The content of the message
          */
         if ('text' in data) {
             this.content = data.text
         }
-        if (this.type === 'link') {
+        if (data.item_type === 'link') {
             this.content = data.link.text
         }
+        /**
+         * @type {string?}
+         * The URL of the photo/file sent by the user
+         */
+        this.mediaURL = data.media.image_versions2.candidates[0].url
 
         // handle promises
         if (this.chat && this.chat._sentMessagesPromises.has(this.id)) {
