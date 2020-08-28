@@ -91,6 +91,7 @@ class InstaClient extends EventEmitter {
             ])
             return
         }
+        this.emit('rawRealtime', topic, payload)
         if (topic.id === '146') {
             const rawMessages = JSON.parse(payload)
             rawMessages.forEach(async (rawMessage) => {
@@ -176,6 +177,7 @@ class InstaClient extends EventEmitter {
             ])
             return
         }
+        this.emit('rawFbns', data)
         if (data.pushCategory === 'new_follower') {
             const user = await this.fetchUser(data.sourceUserId)
             this.emit('newFollower', user)
