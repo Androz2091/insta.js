@@ -170,6 +170,7 @@ class InstaClient extends EventEmitter {
                         this.fetchChat(threadID).then((chat) => {
                             // Create a new message
                             const messagePayload = JSON.parse(data.value)
+                            if (messagePayload.item_type === 'action_log') return
                             const message = new Message(this, threadID, messagePayload)
                             chat.messages.set(message.id, message)
                             this.emit('messageCreate', message)
