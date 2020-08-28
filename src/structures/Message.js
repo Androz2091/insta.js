@@ -127,7 +127,7 @@ class Message {
      * @returns {Promise<Message>}
      */
     reply (content) {
-        return this.chat.sendMessage(content)
+        return this.chat.sendMessage(`@${this.author.username}, ${content}`)
     }
 
     toString () {
