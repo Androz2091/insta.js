@@ -166,6 +166,20 @@ class Chat {
      * Send a voice message in the chat
      * @param {Buffer} buffer The mp4 buffer to send
      * @returns {Promise<Message>}
+     * 
+     * @example
+     * const fs = require('fs');
+     * const ytdl = require('ytdl-core');
+     * 
+     * const stream = ytdl('http://www.youtube.com/watch?v=A02s8omM_hI', { filter: format => format.container === 'mp4' });
+     * const array = [];
+     * stream
+     *   .on('data', chunk => {
+     *     array.push(chunk);
+     *   })
+     *   .on('end', () => {
+     *     message.chat.sendVoice(Buffer.concat(array));
+     *   });
      */
     sendVoice (buffer) {
         return new Promise((resolve) => {
