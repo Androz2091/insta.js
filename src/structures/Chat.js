@@ -163,6 +163,23 @@ class Chat {
     }
 
     /**
+     * Send a voice message in the chat
+     * @param {Buffer} buffer The mp4 buffer to send
+     * @returns {Promise<Message>}
+     */
+    sendVoice (buffer) {
+        return new Promise((resolve) => {
+            this.threadEntity.broadcastVoice({ file: buffer }).then(({ item_id: itemID }) => {
+                this._sentMessagesPromises.set(itemID, resolve)
+                if (this.messages.has(itemID)) {
+                    this._sentMessagesPromises.delete(itemID)
+                    resolve(this.messages.get(itemID))
+                }
+            })
+        })
+    }
+
+    /**
      * Send a photo in the chat
      * @param {string|Buffer|Attachment} attachment The photo to send
      * @returns {Promise<Message>}
