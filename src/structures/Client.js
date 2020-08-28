@@ -185,7 +185,7 @@ class InstaClient extends EventEmitter {
                             // Emit message delete event
                             const messageID = data.value
                             const existing = chat.messages.get(messageID)
-                            this.emit('messageDelete', existing)
+                            if (!existing) this.emit('messageDelete', existing)
                         })
                         break
                     }
