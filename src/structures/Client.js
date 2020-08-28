@@ -56,6 +56,31 @@ class InstaClient extends EventEmitter {
     }
 
     /**
+     * Fetch a chat and cache it.
+     * @param {string} query The ID of the chat to fetch.
+     * @param {boolean} [force=false] Whether the cache should be ignored
+     * @returns {Promise<Chat>}
+     *
+     * @example
+     * client.fetchChat(340282366841710300949128114477310087639).then((chat) => {
+     *   chat.send('Hey!');
+     * });
+     */
+    async fetchChat (chatID, force) {
+        if (!this.cache.chats.has(chatID)) {
+            const { thread: chatPayload } = await this.ig.feed.directThread({ thread_id: chatID }).request()
+            const chat = new Chat(this, chatID, chatPayload)
+            this.cache.chats.set(chatID, chat)
+        } else {
+            if (force) {
+                const { thread: chatPayload } = await this.ig.feed.directThread({ thread_id: chatID }).request()
+                this.cache.chats.get(chatID)._patch(chatPayload)
+            }
+        }
+        return this.cache.chats.get(chatID)
+    }
+
+    /**
      * Fetch a user and cache it.
      * @param {string} query The ID or the username of the user to fetch.
      * @param {boolean} [force=false] Whether the cache should be ignored
