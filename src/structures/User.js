@@ -15,6 +15,11 @@ class User {
          */
         this.client = client
         /**
+         * @type {string}
+         * The ID of the user
+         */
+        this.id = data.pk
+        /**
          * @type {Collection<string, User>}
          * Collection of users that follow this user.
          * <info>You have to use user.fetchFollowers() to fill the collection</info>
@@ -41,64 +46,59 @@ class User {
     _patch (data) {
         /**
          * @type {string}
-         * The ID of the user
-         */
-        this.id = data.pk
-        /**
-         * @type {string}
          * The username of the user
          */
-        this.username = data.username
+        this.username = 'username' in data ? data.username : this.username
         /**
          * @type {string}
          * The full name of the user
          */
-        this.fullName = data.full_name
-        /**
-         * @type {string}
-         * The biography of the user
-         */
-        this.biography = data.biography
+        this.fullName = 'full_name' in data ? data.full_name : this.fullName
         /**
          * @type {boolean}
          * Whether the user is private
          */
-        this.isPrivate = data.is_private
+        this.isPrivate = 'is_private' in data ? data.is_private : this.isPrivate
         /**
          * @type {boolean}
          * Whether the user is verified
          */
-        this.isVerified = data.is_verified
+        this.isVerified = 'is_verified' in data ? data.is_verified : this.isVerified
         /**
          * @type {boolean}
          * Whether the user is a business profile
          */
-        this.isBusiness = data.is_business
-        /**
-         * @type {number}
-         * The number of media published by the user
-         */
-        this.mediaCount = data.media_count
+        this.isBusiness = 'is_business' in data ? data.is_business : this.isBusiness
         /**
          * @type {string}
          * The URL of the user's avatar
          */
-        this.avatarURL = data.profile_pic_url
+        this.avatarURL = 'profile_pic_url' in data ? data.profile_pic_url : this.avatarURL
         /**
-         * @type {number}
+         * @type {string?}
+         * The biography of the user
+         */
+        this.biography = 'biography' in data ? data.biography : this.biography
+        /**
+         * @type {number?}
+         * The number of media published by the user
+         */
+        this.mediaCount = 'media_count' in data ? data.media_count : this.mediaCount
+        /**
+         * @type {number?}
          * The number of followers of the user
          */
-        this.followerCount = data.follower_count
+        this.followerCount = 'follower_count' in data ? data.follower_count : this.followerCount
         /**
-         * @type {number}
+         * @type {number?}
          * The number of followed users by the user
          */
-        this.followingCount = data.following_count
+        this.followingCount = 'following_count' in data ? data.following_count : this.followingCount
         /**
-         * @type {number}
+         * @type {number?}
          * The number of videos published by IGTV
          */
-        this.totalIgtvVideos = data.total_igtv_videos
+        this.totalIgtvVideos = 'total_igtv_videos' in data ? data.total_igtv_videos : this.totalIgtvVideos
     }
 
     /**
