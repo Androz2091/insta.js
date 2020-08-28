@@ -109,6 +109,43 @@ class User {
         const user = await this.client.fetchUser(this.id, true)
         return user
     }
+
+    /**
+     * Fetch the users that follow this user
+     * @returns {Promise<Collection<string, User>>}
+     */
+    async fetchFollowers () {
+        const followersItems = await this.client.ig.feed.accountFollowers(this.id).items()
+        followersItems.forEach((user) => {
+            if (this.client.cache.users.has(user.pk)) {
+                this.client.cache.users.get(user.pk)._patch(user)
+            } else {
+                const createdUser = new User(this.client, user)
+                this.client.cache.users.set(user.pk, createdUser)
+            }
+            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
+        })
+        return this.followers
+    }
+
+    /**
+     * Fetch the users that follow this user
+     * @returns {Promise<Collection<string, User>>}
+     */
+    async fetchFollowing () {
+        const followingItem = await this.client.ig.feed.accountFollowing(this.id).items()
+        followingItem.forEach((user) => {
+            if (this.client.cache.users.has(user.pk)) {
+                this.client.cache.users.get(user.pk)._patch(user)
+            } else {
+                const createdUser = new User(this.client, user)
+                this.client.cache.users.set(user.pk, createdUser)
+            }
+            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
+        })
+        return this.following
+    }
+
     /**
      * Start following a user
      * @returns {Promise<void>}
@@ -163,42 +200,6 @@ class User {
      */
     async removeFollower () {
         await this.client.ig.friendship.removeFollower(this.id)
-    }
-
-    /**
-     * Fetch the users that follow this user
-     * @returns {Promise<Collection<string, User>>}
-     */
-    async fetchFollowers () {
-        const followersItems = await this.client.ig.feed.accountFollowers(this.id).items()
-        followersItems.forEach((user) => {
-            if (this.client.cache.users.has(user.pk)) {
-                this.client.cache.users.get(user.pk)._patch(user)
-            } else {
-                const createdUser = new User(this.client, user)
-                this.client.cache.users.set(user.pk, createdUser)
-            }
-            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
-        })
-        return this.followers
-    }
-
-    /**
-     * Fetch the users that follow this user
-     * @returns {Promise<Collection<string, User>>}
-     */
-    async fetchFollowing () {
-        const followingItem = await this.client.ig.feed.accountFollowing(this.id).items()
-        followingItem.forEach((user) => {
-            if (this.client.cache.users.has(user.pk)) {
-                this.client.cache.users.get(user.pk)._patch(user)
-            } else {
-                const createdUser = new User(this.client, user)
-                this.client.cache.users.set(user.pk, createdUser)
-            }
-            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
-        })
-        return this.following
     }
 
     /**
