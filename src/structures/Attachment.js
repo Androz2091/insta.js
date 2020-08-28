@@ -4,20 +4,26 @@ const Jimp = require('jimp')
 
 class Attachment {
     /**
-     * Creates an attachment for insta.js
+     * Create an attachment for insta.js
      * @param {string|Buffer} data Attachment data
      */
     constructor (data) {
         /**
+         * @type {string|Buffer}
          * Attachment data
          */
         this.data = data
         /**
+         * @type {Buffer}
          * Attachment file
          */
         this.file = null
     }
 
+    /**
+     * Verify the attachment and generate the file buffer
+     * @private
+     */
     _verify () {
         if (!this.data) throw new Error('Can not create empty attachment!')
         if (Buffer.isBuffer(this.data)) return this._handleBuffer(this.data)
