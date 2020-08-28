@@ -84,7 +84,12 @@ class InstaClient extends EventEmitter {
      * Fetch a user and cache it.
      * @param {string} query The ID or the username of the user to fetch.
      * @param {boolean} [force=false] Whether the cache should be ignored
-     * @returns {User}
+     * @returns {Promise<User>}
+     *
+     * @example
+     * client.fetchUser('pronote_bot').then((user) => {
+     *   user.follow();
+     * });
      */
     async fetchUser (query, force) {
         const userID = Util.isID(query) ? query : await this.ig.user.getIdByUsername(query)
