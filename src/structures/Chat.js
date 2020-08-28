@@ -76,7 +76,7 @@ class Chat {
          * @type {string[]}
          * The IDs of the administrators of the chat.
          */
-        this.adminUserIDs = []
+        this.adminUserIDs = data.admin_user_ids
         /**
          * @type {number}
          * The last time the chat was active.
@@ -146,6 +146,9 @@ class Chat {
      * Send a message in the chat
      * @param {string} content The content of the message to send
      * @returns {Promise<Message>}
+     *
+     * @example
+     * chat.sendMessage('hey!');
      */
     sendMessage (content, options) {
         return new Promise((resolve) => {
