@@ -1,3 +1,5 @@
+const MessageCollector = require('./MessageCollector')
+
 /**
  * Represents a Message
  */
@@ -91,6 +93,16 @@ class Message {
                 timestamp: r.timestamp
             }
         }) : []
+    }
+
+    /**
+     * Create a message collector in this chat
+     * @param {MessageCollectorOptions} options The options for the collector
+     * @returns {MessageCollector}
+     */
+    createMessageCollector (options) {
+        const collector = new MessageCollector(this.chat, options)
+        return collector
     }
 
     /**
