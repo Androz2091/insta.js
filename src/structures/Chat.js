@@ -166,6 +166,10 @@ class Chat {
      * Send a photo in the chat
      * @param {string|Buffer|Attachment} attachment The photo to send
      * @returns {Promise<Message>}
+     *
+     * @example
+     * chat.sendPhoto('https://via.placeholder.com/150');
+     * chat.sendPhoto('./cat.png');
      */
     sendPhoto (attachment) {
         return new Promise((resolve) => {
