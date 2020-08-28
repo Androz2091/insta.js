@@ -72,3 +72,15 @@ class MessageCollector extends EventEmitter {
 }
 
 module.exports = MessageCollector
+
+/**
+ * Emitted when a message is collected by the collector
+ * @event MessageCollector#message
+ * @param {Message} message
+ */
+
+/**
+ * Emitted when the collector ends
+ * @event MessageCollector#end
+ * @param {Message} reason The reason the collector ended
+ */
