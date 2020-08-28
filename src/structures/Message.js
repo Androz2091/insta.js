@@ -30,7 +30,7 @@ class Message {
          * The type of the message, either:
          * * `text` - a simple message
          * * `media` - a photo or a file
-         * * `like` - a like
+         * * `like` - a likes
          */
         this.type = data.item_type === 'link' ? 'text' : data.item_type
         /**
@@ -57,7 +57,7 @@ class Message {
          * @type {string?}
          * The URL of the photo/file sent by the user
          */
-        this.mediaURL = data.media.image_versions2.candidates[0].url
+        this.mediaURL = this.type === 'media' ? data.media.image_versions2.candidates[0].url : undefined
 
         // handle promises
         if (this.chat && this.chat._sentMessagesPromises.has(this.id)) {
