@@ -54,6 +54,8 @@ class Message {
             this.chat._sentMessagesPromises.get(this.id)(this)
             this.chat._sentMessagesPromises.delete(this.id)
         }
+
+        this._patch(data)
     }
 
     /**
@@ -70,6 +72,25 @@ class Message {
      */
     get author () {
         return this.client.cache.users.get(this.authorID)
+    }
+
+    _patch (data) {
+        /**
+         * @typedef {object} MessageLike
+         *
+         * @property {string} userID The user who added the like to the message
+         * @property {number} timestamp The time the user added the like
+         */
+        /**
+         * @type {MessageLike[]}
+         * The likes on this message
+         */
+        this.likes = 'reactions' in data ? data.reactions.likes.map((r) => {
+            return {
+                userID: r.sender_id,
+                timestamp: r.timestamp
+            }
+        }) : []
     }
 
     /**

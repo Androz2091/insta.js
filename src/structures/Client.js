@@ -100,8 +100,34 @@ class InstaClient extends EventEmitter {
                     case 'replace': {
                         if (data.path.startsWith('/direct_v2/inbox/threads/')) {
                             const threadID = data.path.substr('/direct_v2/inbox/threads/'.length, data.path.length)
-                            const chat = new Chat(this, threadID, JSON.parse(data.value))
-                            this.cache.chats.set(chat.id, chat)
+                            if (this.cache.chats.has(threadID)) {
+                                this.cache.chats.get(threadID)._patch(JSON.parse(data.value))
+                            } else {
+                                const chat = new Chat(this, threadID, JSON.parse(data.value))
+                                this.cache.chats.set(chat.id, chat)
+                            }
+                        } else {
+                            const { threadID } = Util.parseMessagePath(data.path)
+                            const chat = this.cache.chats.get(threadID)
+                            const messagePayload = JSON.parse(data.value)
+                            if (chat.messages.has(messagePayload.item_id)) {
+                                const oldLikes = chat.messages.get(messagePayload.item_id).likes
+                                chat.messages.get(messagePayload.item_id)._patch(messagePayload)
+                                const newMessage = chat.messages.get(messagePayload.item_id)
+                                if (oldLikes.length > newMessage.likes.length) {
+                                    const removed = oldLikes.find((like) => !newMessage.likes.some((l) => l.userID === like.userID))
+                                    this.fetchUser(removed.userID).then((user) => {
+                                        if (removed) this.emit('likeRemove', user, newMessage)
+                                    })
+                                } else if (newMessage.likes.length > oldLikes.length) {
+                                    const added = newMessage.likes.find((like) => !oldLikes.some((l) => l.userID === like.userID))
+                                    if (added) {
+                                        this.fetchUser(added.userID).then((user) => {
+                                            this.emit('likeAdd', user, newMessage)
+                                        })
+                                    }
+                                }
+                            }
                         }
                         break
                     }
