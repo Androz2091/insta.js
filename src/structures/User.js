@@ -102,6 +102,14 @@ class User {
     }
 
     /**
+     * Fetch the user to access all the properties
+     * @returns {Promise<User>}
+     */
+    async fetch () {
+        const user = await this.client.fetchUser(this.id, true)
+        return user
+    }
+    /**
      * Start following a user
      * @returns {Promise<void>}
      */
