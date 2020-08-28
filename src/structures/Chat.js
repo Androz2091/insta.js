@@ -44,6 +44,7 @@ class Chat {
          */
         this.typing = false
 
+        this._disableTypingOnSend = null
         this._stopTypingTimeout = null
         this._keepTypingAliveInterval = null
         this._sentMessagesPromises = new Collection()
@@ -162,17 +163,19 @@ class Chat {
 
     /**
      * Start typing in the chat
-     * @param {number} options Options
-     * @param {number} options.time For how long the client should type.
+     * @param {number} [options] Options
+     * @param {number} [options.time=10000] For how long the client should type
+     * @param {boolean} [options.disableOnSend=true] Whether the bot should stop typing when it sends a new message
      * @returns {Promise<void>}
      */
-    async startTyping ({ duration }) {
+    async startTyping ({ duration, disableOnSend } = {}) {
         this.typing = true
         await this.client.ig.realtime.direct.indicateActivity({
             threadId: this.id,
             isActive: true
         })
-        this._stopTypingTimeout = setTimeout(() => this.stopTyping(), duration)
+        this._disableTypingOnSend = disableOnSend !== undefined ? disableOnSend : true
+        this._stopTypingTimeout = setTimeout(() => this.stopTyping(), (duration || 10000))
         this._keepTypingAliveInterval = setInterval(() => this._keepTypingAlive(), 9000)
     }
 
@@ -200,6 +203,7 @@ class Chat {
     sendMessage (content, options) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
+                if (this.typing && !this._disableTypingOnSend) this._keepTypingAlive()
                 this._sentMessagesPromises.set(itemID, resolve)
                 if (this.messages.has(itemID)) {
                     this._sentMessagesPromises.delete(itemID)
@@ -230,6 +234,7 @@ class Chat {
     sendVoice (buffer) {
         return new Promise((resolve) => {
             this.threadEntity.broadcastVoice({ file: buffer }).then(({ item_id: itemID }) => {
+                if (this.typing && !this._disableTypingOnSend) this._keepTypingAlive()
                 this._sentMessagesPromises.set(itemID, resolve)
                 if (this.messages.has(itemID)) {
                     this._sentMessagesPromises.delete(itemID)
@@ -255,6 +260,7 @@ class Chat {
             }
             attachment._verify().then(() => {
                 this.threadEntity.broadcastPhoto({ file: attachment.file }).then(({ item_id: itemID }) => {
+                    if (this.typing && !this._disableTypingOnSend) this._keepTypingAlive()
                     this._sentMessagesPromises.set(itemID, resolve)
                     if (this.messages.has(itemID)) {
                         this._sentMessagesPromises.delete(itemID)
