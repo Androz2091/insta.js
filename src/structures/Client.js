@@ -139,26 +139,27 @@ class InstaClient extends EventEmitter {
                             }
                         } else {
                             const { threadID } = Util.parseMessagePath(data.path)
-                            const chat = this.cache.chats.get(threadID)
-                            const messagePayload = JSON.parse(data.value)
-                            if (chat.messages.has(messagePayload.item_id)) {
-                                const oldLikes = chat.messages.get(messagePayload.item_id).likes
-                                chat.messages.get(messagePayload.item_id)._patch(messagePayload)
-                                const newMessage = chat.messages.get(messagePayload.item_id)
-                                if (oldLikes.length > newMessage.likes.length) {
-                                    const removed = oldLikes.find((like) => !newMessage.likes.some((l) => l.userID === like.userID))
-                                    this.fetchUser(removed.userID).then((user) => {
-                                        if (removed) this.emit('likeRemove', user, newMessage)
-                                    })
-                                } else if (newMessage.likes.length > oldLikes.length) {
-                                    const added = newMessage.likes.find((like) => !oldLikes.some((l) => l.userID === like.userID))
-                                    if (added) {
-                                        this.fetchUser(added.userID).then((user) => {
-                                            this.emit('likeAdd', user, newMessage)
+                            this.fetchChat(threadID).then((chat) => {
+                                const messagePayload = JSON.parse(data.value)
+                                if (chat.messages.has(messagePayload.item_id)) {
+                                    const oldLikes = chat.messages.get(messagePayload.item_id).likes
+                                    chat.messages.get(messagePayload.item_id)._patch(messagePayload)
+                                    const newMessage = chat.messages.get(messagePayload.item_id)
+                                    if (oldLikes.length > newMessage.likes.length) {
+                                        const removed = oldLikes.find((like) => !newMessage.likes.some((l) => l.userID === like.userID))
+                                        this.fetchUser(removed.userID).then((user) => {
+                                            if (removed) this.emit('likeRemove', user, newMessage)
                                         })
+                                    } else if (newMessage.likes.length > oldLikes.length) {
+                                        const added = newMessage.likes.find((like) => !oldLikes.some((l) => l.userID === like.userID))
+                                        if (added) {
+                                            this.fetchUser(added.userID).then((user) => {
+                                                this.emit('likeAdd', user, newMessage)
+                                            })
+                                        }
                                     }
                                 }
-                            }
+                            })
                         }
                         break
                     }
@@ -166,23 +167,25 @@ class InstaClient extends EventEmitter {
                     case 'add': {
                         // Fetch the chat where the message was sent
                         const { threadID } = Util.parseMessagePath(data.path)
-                        const chat = this.cache.chats.get(threadID)
-                        // Create a new message
-                        const messagePayload = JSON.parse(data.value)
-                        const message = new Message(this, threadID, messagePayload)
-                        chat.messages.set(message.id, message)
-                        this.emit('messageCreate', message)
+                        this.fetchChat(threadID).then((chat) => {
+                            // Create a new message
+                            const messagePayload = JSON.parse(data.value)
+                            const message = new Message(this, threadID, messagePayload)
+                            chat.messages.set(message.id, message)
+                            this.emit('messageCreate', message)
+                        })
                         break
                     }
 
                     case 'remove': {
                         // Fetch the chat where the message was sent
                         const { threadID } = Util.parseMessagePath(data.path)
-                        const chat = this.cache.chats.get(threadID)
-                        // Emit message delete event
-                        const messageID = data.value
-                        const existing = chat.messages.get(messageID)
-                        this.emit('messageDelete', existing)
+                        this.fetchChat(threadID).then((chat) => {
+                            // Emit message delete event
+                            const messageID = data.value
+                            const existing = chat.messages.get(messageID)
+                            this.emit('messageDelete', existing)
+                        })
                         break
                     }
 
