@@ -15,34 +15,14 @@ class Message {
         this.client = client
         /**
          * @type {string}
-         * The ID of the chat the message was sent in
-         */
-        this.chatID = threadID
-        this._patch(data)
-    }
-
-    /**
-     * @type {Chat}
-     * The chat the message was sent in
-     */
-    get chat () {
-        return this.client.cache.chats.get(this.chatID)
-    }
-
-    /**
-     * @type {User}
-     * The author of the message
-     */
-    get author () {
-        return this.client.cache.users.get(this.authorID)
-    }
-
-    _patch (data) {
-        /**
-         * @type {string}
          * The ID of the message
          */
         this.id = data.item_id
+        /**
+         * @type {string}
+         * The ID of the chat the message was sent in
+         */
+        this.chatID = threadID
         /**
          * @type {string}
          * The type of the message
@@ -69,10 +49,27 @@ class Message {
             this.content = data.link.text
         }
 
+        // handle promises
         if (this.chat && this.chat._sentMessagesPromises.has(this.id)) {
             this.chat._sentMessagesPromises.get(this.id)(this)
             this.chat._sentMessagesPromises.delete(this.id)
         }
+    }
+
+    /**
+     * @type {Chat}
+     * The chat the message was sent in
+     */
+    get chat () {
+        return this.client.cache.chats.get(this.chatID)
+    }
+
+    /**
+     * @type {User}
+     * The author of the message
+     */
+    get author () {
+        return this.client.cache.users.get(this.authorID)
     }
 
     /**
