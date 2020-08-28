@@ -38,7 +38,14 @@ class Chat {
          * The users that left the chat.
          */
         this.leftUsers = new Collection()
+        /**
+         * @type {boolean}
+         * Whether the client is typing in the chat.
+         */
+        this.typing = false
 
+        this._stopTypingTimeout = null
+        this._keepTypingAliveInterval = null
         this._sentMessagesPromises = new Collection()
 
         this._patch(data)
@@ -121,6 +128,8 @@ class Chat {
     async approve () {
         this.pending = false
         await this.client.ig.directThread.approve(this.id)
+        if (!this.client.cache.chats.has(this.id)) this.client.cache.chats.set(this.id, this)
+        this.client.cache.pendingChats.delete(this.id)
         this.client.emit('messageCreate', this.messages.first())
     }
 
@@ -140,6 +149,44 @@ class Chat {
      */
     async deleteMessage (messageID) {
         await this.threadEntity.deleteItem(messageID)
+    }
+
+    async _keepTypingAlive () {
+        if (this.typing) {
+            await this.client.ig.realtime.direct.indicateActivity({
+                threadId: this.id,
+                isActive: true
+            })
+        } else if (this._keepTypingAliveInterval) clearTimeout(this._keepTypingAliveInterval)
+    }
+
+    /**
+     * Start typing in the chat
+     * @param {number} options Options
+     * @param {number} options.time For how long the client should type.
+     * @returns {Promise<void>}
+     */
+    async startTyping ({ duration }) {
+        this.typing = true
+        await this.client.ig.realtime.direct.indicateActivity({
+            threadId: this.id,
+            isActive: true
+        })
+        this._stopTypingTimeout = setTimeout(() => this.stopTyping(), duration)
+        this._keepTypingAliveInterval = setInterval(() => this._keepTypingAlive(), 9000)
+    }
+
+    /**
+     * Stop typing in the chat
+     * @returns {Promise<void>}
+     */
+    async stopTyping () {
+        if (this._keepTypingAliveInterval) clearTimeout(this._keepTypingAliveInterval)
+        this.typing = false
+        await this.client.ig.realtime.direct.indicateActivity({
+            threadId: this.id,
+            isActive: false
+        })
     }
 
     /**
@@ -166,10 +213,10 @@ class Chat {
      * Send a voice message in the chat
      * @param {Buffer} buffer The mp4 buffer to send
      * @returns {Promise<Message>}
-     * 
+     *
      * @example
      * const ytdl = require('ytdl-core');
-     * 
+     *
      * const stream = ytdl('http://www.youtube.com/watch?v=A02s8omM_hI', { filter: format => format.container === 'mp4' });
      * const array = [];
      * stream
