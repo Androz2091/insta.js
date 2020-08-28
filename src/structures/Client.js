@@ -277,6 +277,20 @@ module.exports = InstaClient
  */
 
 /**
+ * Emitted when a user adds a like to a message
+ * @event InstaClient#likeAdd
+ * @param {User} user The user who added the like
+ * @param {Message} message The message on which the like was added
+ */
+
+/**
+ * Emitted when a user removes a like from a message
+ * @event InstaClient#likeRemove
+ * @param {User} user The user who removed the like
+ * @param {Message} message The message on which the like was removed
+ */
+
+/**
  * Emitted when someone starts following the bot
  * @event InstaClient#newFollower
  * @param {User} user The user that started following the bot
