@@ -30,7 +30,7 @@ class MessageCollector extends EventEmitter {
          * @type {Function}
          * The filter to apply
          */
-        this.filter = filter
+        this.filter = filter || (() => true)
         /**
          * @type {number}
          * How long to stop the collector after inactivity in milliseconds
