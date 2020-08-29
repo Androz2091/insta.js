@@ -65,7 +65,7 @@ class MessageCollector extends EventEmitter {
      * @param {string} reason The reason the collector ended
      */
     async end (reason) {
-        this.removeListener('messageCreate', this.handleMessage)
+        this.client.removeListener('messageCreate', this.handleMessage)
         this.ended = true
         this.emit('end', reason)
     }
