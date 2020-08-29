@@ -214,6 +214,25 @@ class User {
     toString () {
         return this.id
     }
+
+    toJSON () {
+        return {
+            client: this.client.toJSON(),
+            username: this.username,
+            fullName: this.fullName,
+            isPrivate: this.isPrivate,
+            isVerified: this.isVerified,
+            isBusiness: this.isBusiness,
+            avatarURL: this.avatarURL,
+            biography: this.biography,
+            mediaCount: this.mediaCount,
+            followerCount: this.followerCount,
+            followingCount: this.followingCount,
+            followers: this.followers.map((u) => u.id),
+            following: this.following.map((u) => u.id),
+            totalIgtvVideos: this.totalIgtvVideos
+        }
+    }
 }
 
 module.exports = User

@@ -69,6 +69,14 @@ class MessageCollector extends EventEmitter {
         this.ended = true
         this.emit('end', reason)
     }
+
+    toJSON () {
+        return {
+            client: this.client.toJSON(),
+            chatID: this.chat.id,
+            ended: this.ended
+        }
+    }
 }
 
 module.exports = MessageCollector

@@ -36,6 +36,16 @@ class ClientUser extends User {
     get denyFollow () { return undefined }
     get removeFollower () { return undefined }
     get send () { return undefined }
+
+    toJSON () {
+        return {
+            ...super.toJSON(),
+            ...{
+                allowContactsSync: this.allowContactsSync,
+                phoneNumber: this.phoneNumber
+            }
+        }
+    }
 }
 
 module.exports = ClientUser

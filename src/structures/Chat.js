@@ -270,6 +270,21 @@ class Chat {
             })
         })
     }
+
+    toJSON () {
+        return {
+            client: this.client.toJSON(),
+            adminUserIDs: this.adminUserIDs,
+            lastActivityAt: this.adminUserIDs,
+            muted: this.muted,
+            isPin: this.isPin,
+            named: this.named,
+            pending: this.pending,
+            isGroup: this.isGroup,
+            users: this.users.map((u) => u.id),
+            messages: this.messages.map((m) => m.id)
+        }
+    }
 }
 
 module.exports = Chat

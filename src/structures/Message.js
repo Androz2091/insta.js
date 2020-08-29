@@ -141,6 +141,19 @@ class Message {
     toString () {
         return this.content
     }
+
+    toJSON () {
+        return {
+            client: this.client.toJSON(),
+            chatID: this.chatID,
+            type: this.type,
+            timestamp: this.timestamp,
+            authorID: this.authorID,
+            content: this.content,
+            mediaURL: this.mediaURL,
+            likes: this.likes
+        }
+    }
 }
 
 module.exports = Message

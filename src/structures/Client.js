@@ -142,7 +142,8 @@ class InstaClient extends EventEmitter {
                             this.fetchChat(threadID).then((chat) => {
                                 const messagePayload = JSON.parse(data.value)
                                 if (chat.messages.has(messagePayload.item_id)) {
-                                    const oldLikes = chat.messages.get(messagePayload.item_id).likes
+                                    const oldMessage = chat.messages.get(messagePayload.item_id)
+                                    const oldLikes = oldMessage.likes
                                     chat.messages.get(messagePayload.item_id)._patch(messagePayload)
                                     const newMessage = chat.messages.get(messagePayload.item_id)
                                     if (oldLikes.length > newMessage.likes.length) {
@@ -295,6 +296,14 @@ class InstaClient extends EventEmitter {
                 this.handleFbnsReceive(...event)
             }
         })
+    }
+
+    toJSON () {
+        const json = {
+            ready: this.ready,
+            id: this.user.id
+        }
+        return json
     }
 }
 
