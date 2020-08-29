@@ -223,8 +223,9 @@ class User {
      * @param {string} content The content of the message to send
      * @returns {Promise<Message>}
      */
-    send (content) {
-        return this.privateChat.send(content)
+    async send (content) {
+        if (!this.privateChat) await this.fetchPrivateChat()
+        return await this.privateChat.send(content)
     }
 
     toString () {
