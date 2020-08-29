@@ -57,69 +57,84 @@ class Chat {
     }
 
     _patch (data) {
-        data.users.forEach((user) => {
-            const exisiting = this.client.cache.users.get(user.pk)
-            if (exisiting) {
-                this.users.set(user.pk, exisiting)
-                this.users.get(user.pk)._patch(user)
-            } else {
-                this.users.set(user.pk, new User(this.client, user))
-                this.client.cache.users.set(user.pk, this.users.get(user.pk))
-            }
-        })
-        data.left_users.forEach((user) => {
-            const exisiting = this.client.cache.users.get(user.pk)
-            if (exisiting) {
-                this.leftUsers.set(user.pk, exisiting)
-                this.leftUsers.get(user.pk)._patch(user)
-            } else {
-                this.leftUsers.set(user.pk, new User(this.client, user))
-                this.client.cache.users.set(user.pk, this.leftUsers.get(user.pk))
-            }
-        })
-        data.items.forEach((item) => {
-            this.messages.set(item.item_id, new Message(this.client, this.id, item))
-        })
+        if ('users' in data) {
+            this.users = new Collection()
+            data.users.forEach((user) => {
+                const exisiting = this.client.cache.users.get(user.pk)
+                if (exisiting) {
+                    this.users.set(user.pk, exisiting)
+                    this.users.get(user.pk)._patch(user)
+                } else {
+                    this.users.set(user.pk, new User(this.client, user))
+                    this.client.cache.users.set(user.pk, this.users.get(user.pk))
+                }
+            })
+        }
+        if ('left_users' in data) {
+            this.leftUsers = new Collection()
+            data.left_users.forEach((user) => {
+                const exisiting = this.client.cache.users.get(user.pk)
+                if (exisiting) {
+                    this.leftUsers.set(user.pk, exisiting)
+                    this.leftUsers.get(user.pk)._patch(user)
+                } else {
+                    this.leftUsers.set(user.pk, new User(this.client, user))
+                    this.client.cache.users.set(user.pk, this.leftUsers.get(user.pk))
+                }
+            })
+        }
+        if ('items' in data) {
+            this.messages = new Collection()
+            data.items.forEach((item) => {
+                this.messages.set(item.item_id, new Message(this.client, this.id, item))
+            })
+        }
+
         /**
          * @type {string[]}
          * The IDs of the administrators of the chat.
          */
-        this.adminUserIDs = data.admin_user_ids
+        this.adminUserIDs = 'admin_user_ids' in data ? data.admin_user_ids : this.adminUserIDs
         /**
          * @type {number}
          * The last time the chat was active.
          */
-        this.lastActivityAt = data.last_activity_at
+        this.lastActivityAt = 'last_activity_at' in data ? data.last_activity_at : this.lastActivityAt
         /**
          * @type {boolean}
          * Whether the account has muted the chat.
          */
-        this.muted = data.muted
+        this.muted = 'muted' in data ? data.muted : this.muted
         /**
          * @type {boolean}
          * Whether the account has pinned the chat.
          */
-        this.isPin = data.is_pin
+        this.isPin = 'is_pin' in data ? data.is_pin : this.isPin
         /**
          * @type {boolean}
          * Whether this chat has a specific name (otherwise it's the default name).
          */
-        this.named = data.named
+        this.named = 'named' in data ? data.named : this.named
+        /**
+         * @type {string}
+         * The name of the chat
+         */
+        this.name = 'thread_title' in data ? data.thread_title : this.name
         /**
          * @type {boolean}
          * Whether the chat is waiting for the account approval.
          */
-        this.pending = data.pending
+        this.pending = 'pending' in data ? data.pending : this.pending
         /**
          * @type {boolean}
          * Whether the chat is a group.
          */
-        this.isGroup = data.is_group
+        this.isGroup = 'is_group' in data ? data.is_group : this.isGroup
         /**
          * @type {boolean}
          * The type of the chat.
          */
-        this.type = data.thread_type
+        this.type = 'thread_type' in data ? data.thread_type : this.type
     }
 
     /**

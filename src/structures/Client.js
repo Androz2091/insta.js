@@ -129,33 +129,54 @@ class InstaClient extends EventEmitter {
                     // Emit right event
                     switch (data.op) {
                     case 'replace': {
-                        if (data.path.startsWith('/direct_v2/inbox/threads/')) {
-                            const threadID = data.path.substr('/direct_v2/inbox/threads/'.length, data.path.length)
+                        const isInboxThreadPath = Util.matchInboxThreadPath(data.path, false)
+                        if (isInboxThreadPath) {
+                            const [ threadID ] = Util.matchInboxThreadPath(data.path, true)
                             if (this.cache.chats.has(threadID)) {
+                                const chat = this.cache.chats.get(threadID)
+                                const oldChat = Object.assign(Object.create(chat), chat)
                                 this.cache.chats.get(threadID)._patch(JSON.parse(data.value))
+
+                                /* Compare name */
+                                if (oldChat.name !== chat.name) {
+                                    this.emit('chatNameUpdate', chat, oldChat.name, chat.name)
+                                }
+
+                                /* Compare users */
+                                if (oldChat.users.size < chat.users.size) {
+                                    const userAdded = chat.users.find((u) => !oldChat.users.has(u.id))
+                                    if (userAdded) this.emit('chatUserAdd', chat, userAdded)
+                                } else if (oldChat.users.size > chat.users.size) {
+                                    const userRemoved = oldChat.users.find((u) => !chat.users.has(u.id))
+                                    if (userRemoved) this.emit('chatUserRemove', chat, userRemoved)
+                                }
                             } else {
                                 const chat = new Chat(this, threadID, JSON.parse(data.value))
                                 this.cache.chats.set(chat.id, chat)
                             }
-                        } else {
-                            const { threadID } = Util.parseMessagePath(data.path)
+                            return
+                        }
+                        const isMessagePath = Util.matchMessagePath(data.path, false)
+                        if (isMessagePath) {
+                            const [ threadID ] = Util.matchMessagePath(data.path, true)
                             this.fetchChat(threadID).then((chat) => {
                                 const messagePayload = JSON.parse(data.value)
                                 if (chat.messages.has(messagePayload.item_id)) {
-                                    const oldMessage = chat.messages.get(messagePayload.item_id)
-                                    const oldLikes = oldMessage.likes
+                                    const message = chat.messages.get(messagePayload.item_id)
+                                    const oldMessage = Object.assign(Object.create(message), message)
                                     chat.messages.get(messagePayload.item_id)._patch(messagePayload)
-                                    const newMessage = chat.messages.get(messagePayload.item_id)
-                                    if (oldLikes.length > newMessage.likes.length) {
-                                        const removed = oldLikes.find((like) => !newMessage.likes.some((l) => l.userID === like.userID))
+
+                                    /* Compare likes */
+                                    if (oldMessage.likes.length > message.likes.length) {
+                                        const removed = oldMessage.likes.find((like) => !message.likes.some((l) => l.userID === like.userID))
                                         this.fetchUser(removed.userID).then((user) => {
-                                            if (removed) this.emit('likeRemove', user, newMessage)
+                                            if (removed) this.emit('likeRemove', user, message)
                                         })
-                                    } else if (newMessage.likes.length > oldLikes.length) {
-                                        const added = newMessage.likes.find((like) => !oldLikes.some((l) => l.userID === like.userID))
+                                    } else if (message.likes.length > oldMessage.likes.length) {
+                                        const added = message.likes.find((like) => !oldMessage.likes.some((l) => l.userID === like.userID))
                                         if (added) {
                                             this.fetchUser(added.userID).then((user) => {
-                                                this.emit('likeAdd', user, newMessage)
+                                                this.emit('likeAdd', user, message)
                                             })
                                         }
                                     }
@@ -166,28 +187,56 @@ class InstaClient extends EventEmitter {
                     }
 
                     case 'add': {
-                        // Fetch the chat where the message was sent
-                        const { threadID } = Util.parseMessagePath(data.path)
-                        this.fetchChat(threadID).then((chat) => {
-                            // Create a new message
-                            const messagePayload = JSON.parse(data.value)
-                            if (messagePayload.item_type === 'action_log') return
-                            const message = new Message(this, threadID, messagePayload)
-                            chat.messages.set(message.id, message)
-                            this.emit('messageCreate', message)
-                        })
+                        const isAdminPath = Util.matchAdminPath(data.path, false)
+                        if (isAdminPath) {
+                            const [ threadID, userID ] = Util.matchAdminPath(data.path, true)
+                            this.fetchChat(threadID).then((chat) => {
+                                // Mark the user as an admin
+                                chat.adminUserIDs.push(userID)
+                                this.fetchUser(userID).then((user) => {
+                                    this.emit('chatAdminAdd', chat, user)
+                                })
+                            })
+                            return
+                        }
+                        const isMessagePath = Util.matchMessagePath(data.path, false)
+                        if (isMessagePath) {
+                            const [ threadID ] = Util.matchMessagePath(data.path, true)
+                            this.fetchChat(threadID).then((chat) => {
+                                // Create a new message
+                                const messagePayload = JSON.parse(data.value)
+                                if (messagePayload.item_type === 'action_log') return
+                                const message = new Message(this, threadID, messagePayload)
+                                chat.messages.set(message.id, message)
+                                this.emit('messageCreate', message)
+                            })
+                        }
                         break
                     }
 
                     case 'remove': {
-                        // Fetch the chat where the message was sent
-                        const { threadID } = Util.parseMessagePath(data.path)
-                        this.fetchChat(threadID).then((chat) => {
-                            // Emit message delete event
-                            const messageID = data.value
-                            const existing = chat.messages.get(messageID)
-                            if (existing) this.emit('messageDelete', existing)
-                        })
+                        const isAdminPath = Util.matchAdminPath(data.path, false)
+                        if (isAdminPath) {
+                            const [ threadID, userID ] = Util.matchAdminPath(data.path, true)
+                            this.fetchChat(threadID).then((chat) => {
+                                // Remove the user from the administrators
+                                chat.adminUserIDs.push(userID)
+                                this.fetchUser(userID).then((user) => {
+                                    this.emit('chatAdminRemove', chat, user)
+                                })
+                            })
+                            return
+                        }
+                        const isMessagePath = Util.matchMessagePath(data.path, false)
+                        if (isMessagePath) {
+                            const [ threadID ] = Util.matchMessagePath(data.path)
+                            this.fetchChat(threadID).then((chat) => {
+                                // Emit message delete event
+                                const messageID = data.value
+                                const existing = chat.messages.get(messageID)
+                                if (existing) this.emit('messageDelete', existing)
+                            })
+                        }
                         break
                     }
 
@@ -351,4 +400,33 @@ module.exports = InstaClient
  * Emitted when someone wants to send a message to the bot
  * @event InstaClient#pendingRequest
  * @param {Chat} chat The chat that needs to be approved
+ */
+
+/**
+ * Emitted when the name of a chat changes
+ * @event InstaClient#chatNameUpdate
+ * @param {Chat} chat The chat whose name has changed
+ * @param {string} oldName The previous name of the chat
+ * @param {string} newName The new name of the chat
+ */
+
+/**
+ * Emitted when a user is added to a chat
+ * @event InstaClient#chatUserAdd
+ * @param {Chat} chat The chat in which the user has been added
+ * @param {User} user The user who has been added
+ */
+
+/**
+ * Emitted when a user is removed from a chat
+ * @event InstaClient#chatUserRemove
+ * @param {Chat} chat The chat from which the user has been removed
+ * @param {User} user The user who has been removed
+ */
+
+/**
+ * Emitted when a user becomes an administrator in a chat
+ * @event InstaClient#chatAdminAdd
+ * @param {Chat} chat The chat in which the user has become an administrator
+ * @param {User} user The user who has become admin
  */
