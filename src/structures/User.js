@@ -1,4 +1,5 @@
 const Collection = require('@discordjs/collection')
+const Chat = require('./Chat')
 
 /**
  * Represents a User
@@ -108,6 +109,21 @@ class User {
     async fetch () {
         const user = await this.client.fetchUser(this.id, true)
         return user
+    }
+
+    /**
+     * Fetch (or create) a private chat between the client and the user.
+     * @returns {Promise<Chat>}
+     * @example
+     * if(!user.privateChat) await user.fetchPrivateChat();
+     * user.privateChat.sendPhoto('https://picsum.photos/536/354');
+     */
+    async fetchPrivateChat () {
+        if (this.privateChat) return this.privateChat
+        const threadPayload = await this.client.ig.direct.createGroupThread([ this.id ])
+        const chat = new Chat(this.client, threadPayload.thread_id, threadPayload)
+        this.client.cache.chats.set(chat.id, chat)
+        return chat
     }
 
     /**
