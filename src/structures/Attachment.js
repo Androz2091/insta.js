@@ -27,7 +27,7 @@ class Attachment {
     _verify () {
         if (!this.data) throw new Error('Can not create empty attachment!')
         if (Buffer.isBuffer(this.data)) return this._handleBuffer(this.data)
-        if (typeof this.data === 'string' && this.data.startsWith('https://')) return this._handleURL(this.data)
+        if (typeof this.data === 'string' && /http(s)?:\/\//.test(this.data)) return this._handleURL(this.data)
         else if (typeof this.data === 'string') return this._handleFile(this.data)
         throw new Error('Unsupported attachment.')
     }
