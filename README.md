@@ -1,6 +1,6 @@
 # [Insta.js](https://npmjs.com/@androz2091/insta.js)
 
-💬 Object-oriented library for sending and receiving messages via Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)** and made for the **[PronoteBot](https://github.com/Androz2091/pronote-bot)** project.
+💬 Object-oriented library for sending and receiving messages via Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)**, it is very similiar to **[discord.js](https://npmjs.com/discord.js)**.
 
 ## Example
 
@@ -16,31 +16,13 @@ client.on('connected', () => {
 });
 
 client.on('messageCreate', (message) => {
-    if (message.authorID === client.user.id) return
+    if (message.author.id === client.user.id) return
 
     message.markSeen();
 
     if (message.content === '!ping') {
         message.reply('!pong');
     }
-});
-
-client.on('messageDelete', (cachedMessage) => {
-    if (!cachedMessage) return;
-    console.log(`@${cachedMessage.author.username} has just deleted their message: ${cachedMessage.content}`);
-});
-
-// follow back everyone
-client.on('newFollower', (user) => {
-    user.follow();
-});
-
-client.on('followRequest', (user) => {
-    user.approveFollow();
-});
-
-client.on('pendingRequest', (chat) => {
-    chat.approve();
 });
 
 client.login('username', 'password');
