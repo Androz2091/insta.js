@@ -115,7 +115,11 @@ class User {
      * Fetch (or create) a private chat between the client and the user.
      * @returns {Promise<Chat>}
      * @example
+     * // Send a message to @selenagomez
+     * const user = await client.fetchUser('selenagomez');
+     * // Use fetchPrivateChat() as I've never sent a message to this account
      * if(!user.privateChat) await user.fetchPrivateChat();
+     * // Then I can use User#privateChat
      * user.privateChat.sendPhoto('https://picsum.photos/536/354');
      */
     async fetchPrivateChat () {
