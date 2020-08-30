@@ -135,6 +135,11 @@ class Chat {
          * The type of the chat.
          */
         this.type = 'thread_type' in data ? data.thread_type : this.type
+        /**
+         * @type {boolean}
+         * If a call is ongoing in this chat.
+         */
+        this.calling = 'video_call_id' in data
     }
 
     /**

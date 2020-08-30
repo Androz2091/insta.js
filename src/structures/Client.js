@@ -162,6 +162,13 @@ class Client extends EventEmitter {
                                     const userRemoved = oldChat.users.find((u) => !chat.users.has(u.id))
                                     if (userRemoved) this.emit('chatUserRemove', chat, userRemoved)
                                 }
+
+                                /* Compare calling status */
+                                if (!oldChat.calling && chat.calling) {
+                                    this.emit('callStart', chat)
+                                } else if (oldChat.calling && !chat.calling) {
+                                    this.emit('callEnd', chat)
+                                }
                             } else {
                                 const chat = new Chat(this, threadID, JSON.parse(data.value))
                                 this.cache.chats.set(chat.id, chat)
@@ -441,4 +448,16 @@ module.exports = Client
  * @event Client#chatAdminAdd
  * @param {Chat} chat The chat in which the user has become an administrator
  * @param {User} user The user who has become admin
+ */
+
+/**
+ * Emitted when a call starts in a chat
+ * @event Client#callStart
+ * @param {Chat} chat The chat in which the call has started
+ */
+
+/**
+ * Emitted when a call ends in a chat
+ * @event Client#callEnd
+ * @param {Chat} chat The chat in which the call has ended
  */
