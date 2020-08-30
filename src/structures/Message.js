@@ -60,6 +60,11 @@ class Message {
          */
         this.mediaURL = this.type === 'media' ? data.media.image_versions2.candidates[0].url : undefined
         /**
+         * @typedef {object} VoiceMessageData
+         * @property {number} duration The duration (in milliseconds) of the voice message.
+         * @property {string} sourceURL The URL to retrieve the file that contains the voice message.
+         */
+        /**
          * @type {VoiceMessageData}
          * The data related to the voice message
          */
