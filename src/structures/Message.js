@@ -29,11 +29,10 @@ class Message {
          * @type {string}
          * The type of the message, either:
          * * `text` - a simple message
-         * * `media` - a photo or a file
-         * * `like` - a likes
+         * * `media` - a photo, a file, a GIF or a sticker
          * * `voice_media` - a voice message
          */
-        this.type = data.item_type === 'link' ? 'text' : data.item_type
+        this.type = data.item_type === 'link' ? 'text' : data.item_type === 'animated_media' ? 'media' : data.item_type
         /**
          * @type {number}
          * The timestamp the message was sent at
@@ -55,15 +54,40 @@ class Message {
             this.content = data.link.text
         }
         /**
-         * @type {boolean}
-         * Whether this message is a sticker
+         * @typedef {object} MessageMediaData
+         * @property {boolean} isLike Whether the media is a like (mediaData.url will be `null`)
+         * @property {boolean} isAnimated Whether the media is animated
+         * @property {boolean} isSticker Whether the media is a sticker
+         * @property {boolean} isRandom Whether the media was chosen randomly
+         * @property {string?} url The URL of the media
          */
-        this.isSticker = 'is_sticker' in data ? data.is_sticker : false
         /**
-         * @type {string?}
-         * The URL of the photo/file sent by the user
+         * @type {MessageMediaData?}
+         * The data concerning the media
          */
-        this.mediaURL = this.type === 'media' ? data.media.image_versions2.candidates[0].url : undefined
+        this.mediaData = undefined
+        if (data.item_type === 'animated_media') {
+            this.mediaData = {
+                isLike: false,
+                isAnimated: true,
+                isSticker: data.animated_media.is_sticker,
+                url: data.animated_media.images.fixed_height.url
+            }
+        } else if (data.item_type === 'like') {
+            this.mediaData = {
+                isLike: true,
+                isAnimated: false,
+                isSticker: false,
+                url: null
+            }
+        } else if (data.item_type === 'media') {
+            this.mediaData = {
+                isLike: true,
+                isAnimated: false,
+                isSticker: false,
+                url: data.media.image_versions2.candidates[0].url
+            }
+        }
         /**
          * @typedef {object} MessageVoiceData
          * @property {number} duration The duration (in milliseconds) of the voice message.
@@ -71,7 +95,7 @@ class Message {
          */
         /**
          * @type {MessageVoiceData?}
-         * The data related to the voice message
+         * The data concerning the voice
          */
         this.voiceData = this.type === 'voice_media' ? {
             duration: data.voice_media.media.audio.duration,
@@ -169,7 +193,7 @@ class Message {
             timestamp: this.timestamp,
             authorID: this.authorID,
             content: this.content,
-            mediaURL: this.mediaURL,
+            mediaData: this.mediaData,
             voiceData: this.voiceData,
             likes: this.likes
         }
