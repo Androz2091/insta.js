@@ -165,6 +165,7 @@ class Message {
             authorID: this.authorID,
             content: this.content,
             mediaURL: this.mediaURL,
+            voiceData: this.voiceData,
             likes: this.likes
         }
     }
