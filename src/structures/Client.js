@@ -56,6 +56,18 @@ class InstaClient extends EventEmitter {
     }
 
     /**
+     * Create a chat (or return the existing one) between one (a dm chat) or multiple users (a group).
+     * @param {string[]} userIDs The users to include in the group
+     * @returns {Promise<Chat>} The created chat
+     */
+    async createChat (userIDs) {
+        const threadPayload = await this.ig.direct.createGroupThread(userIDs)
+        const chat = new Chat(this, threadPayload.thread_id, threadPayload)
+        this.cache.chats.set(chat.id, chat)
+        return chat
+    }
+
+    /**
      * Fetch a chat and cache it.
      * @param {string} query The ID of the chat to fetch.
      * @param {boolean} [force=false] Whether the cache should be ignored
