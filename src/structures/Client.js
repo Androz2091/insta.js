@@ -241,7 +241,7 @@ class Client extends EventEmitter {
                         }
                         const isMessagePath = Util.matchMessagePath(data.path, false)
                         if (isMessagePath) {
-                            const [ threadID ] = Util.matchMessagePath(data.path)
+                            const [ threadID ] = Util.matchMessagePath(data.path, true)
                             this.fetchChat(threadID).then((chat) => {
                                 // Emit message delete event
                                 const messageID = data.value
