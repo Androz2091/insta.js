@@ -55,6 +55,11 @@ class Message {
             this.content = data.link.text
         }
         /**
+         * @type {boolean}
+         * Whether this message is a sticker
+         */
+        this.isSticker = 'is_sticker' in data ? data.is_sticker : false
+        /**
          * @type {string?}
          * The URL of the photo/file sent by the user
          */
