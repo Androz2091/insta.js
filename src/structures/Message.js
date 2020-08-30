@@ -5,13 +5,13 @@ const MessageCollector = require('./MessageCollector')
  */
 class Message {
     /**
-     * @param {InstaClient} client The instantiating client
+     * @param {Client} client The instantiating client
      * @param {string} threadID The ID of the thread
      * @param {object} data The data for the message
      */
     constructor (client, threadID, data) {
         /**
-         * @type {InstaClient}
+         * @type {Client}
          * The client that instantiated this
          */
         this.client = client

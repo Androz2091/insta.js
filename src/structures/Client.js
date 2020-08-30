@@ -12,10 +12,10 @@ const Chat = require('./Chat')
 const User = require('./User')
 
 /**
- * InstaClient, the main hub for interacting with the Instagram API.
+ * Client, the main hub for interacting with the Instagram API.
  * @extends {EventEmitter}
  */
-class InstaClient extends EventEmitter {
+class Client extends EventEmitter {
     constructor () {
         super()
         /**
@@ -368,55 +368,55 @@ class InstaClient extends EventEmitter {
     }
 }
 
-module.exports = InstaClient
+module.exports = Client
 
 /**
  * Emitted when a message is sent in a chat the bot is in
- * @event InstaClient#messageCreate
+ * @event Client#messageCreate
  * @param {Message} message The message that was sent
  */
 
 /**
  * Emitted when a message is deleted in a chat the bot is in
- * @event InstaClient#messageDelete
+ * @event Client#messageDelete
  * @param {Message} message The message that was deleted
  */
 
 /**
  * Emitted when a user adds a like to a message
- * @event InstaClient#likeAdd
+ * @event Client#likeAdd
  * @param {User} user The user who added the like
  * @param {Message} message The message on which the like was added
  */
 
 /**
  * Emitted when a user removes a like from a message
- * @event InstaClient#likeRemove
+ * @event Client#likeRemove
  * @param {User} user The user who removed the like
  * @param {Message} message The message on which the like was removed
  */
 
 /**
  * Emitted when someone starts following the bot
- * @event InstaClient#newFollower
+ * @event Client#newFollower
  * @param {User} user The user that started following the bot
  */
 
 /**
  * Emitted when someone wants to follow the bot
- * @event InstaClient#followRequest
+ * @event Client#followRequest
  * @param {User} user The user who wants to follow the bot
  */
 
 /**
  * Emitted when someone wants to send a message to the bot
- * @event InstaClient#pendingRequest
+ * @event Client#pendingRequest
  * @param {Chat} chat The chat that needs to be approved
  */
 
 /**
  * Emitted when the name of a chat changes
- * @event InstaClient#chatNameUpdate
+ * @event Client#chatNameUpdate
  * @param {Chat} chat The chat whose name has changed
  * @param {string} oldName The previous name of the chat
  * @param {string} newName The new name of the chat
@@ -424,21 +424,21 @@ module.exports = InstaClient
 
 /**
  * Emitted when a user is added to a chat
- * @event InstaClient#chatUserAdd
+ * @event Client#chatUserAdd
  * @param {Chat} chat The chat in which the user has been added
  * @param {User} user The user who has been added
  */
 
 /**
  * Emitted when a user is removed from a chat
- * @event InstaClient#chatUserRemove
+ * @event Client#chatUserRemove
  * @param {Chat} chat The chat from which the user has been removed
  * @param {User} user The user who has been removed
  */
 
 /**
  * Emitted when a user becomes an administrator in a chat
- * @event InstaClient#chatAdminAdd
+ * @event Client#chatAdminAdd
  * @param {Chat} chat The chat in which the user has become an administrator
  * @param {User} user The user who has become admin
  */

@@ -6,7 +6,7 @@ const User = require('./User')
  */
 class ClientUser extends User {
     /**
-     * @param {InstaClient} client The instantiating client
+     * @param {Client} client The instantiating client
      * @param {object} data The data for the client user.
      */
     constructor (client, data) {

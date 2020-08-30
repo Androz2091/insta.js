@@ -8,13 +8,13 @@ const Attachment = require('./Attachment')
  */
 class Chat {
     /**
-     * @param {InstaClient} client The instantiating client
+     * @param {Client} client The instantiating client
      * @param {string} threadID The ID of the thread
      * @param {object} data The data for the chat
      */
     constructor (client, threadID, data) {
         /**
-         * @type {InstaClient}
+         * @type {Client}
          * The client that instantiated this
          */
         this.client = client

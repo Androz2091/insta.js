@@ -17,7 +17,7 @@ class MessageCollector extends EventEmitter {
     constructor (chat, { filter, idle }) {
         super()
         /**
-         * @type {InstaClient}
+         * @type {Client}
          * The client that instantiated this
          */
         this.client = chat.client

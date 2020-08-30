@@ -5,12 +5,12 @@ const Collection = require('@discordjs/collection')
  */
 class User {
     /**
-     * @param {InstaClient} client The instantiating client
+     * @param {Client} client The instantiating client
      * @param {object} data The data for the user
      */
     constructor (client, data) {
         /**
-         * @type {InstaClient}
+         * @type {Client}
          * The client that instantiated this
          */
         this.client = client
