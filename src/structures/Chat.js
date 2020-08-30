@@ -301,6 +301,7 @@ class Chat {
             named: this.named,
             pending: this.pending,
             isGroup: this.isGroup,
+            calling: this.calling,
             users: this.users.map((u) => u.id),
             messages: this.messages.map((m) => m.id)
         }
