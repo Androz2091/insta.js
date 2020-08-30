@@ -56,6 +56,20 @@ class Client extends EventEmitter {
     }
 
     /**
+     * Create a new user or patch the cache one with the payload
+     * @param {string} userID The ID of the user to patch
+     * @param {object} userPayload The data of the user
+     */
+    _patchOrCreateUser (userID, userPayload) {
+        if (this.cache.users.has(userID)) {
+            this.cache.users.get(userID)._patch(userPayload)
+        } else {
+            this.cache.users.set(userID, new User(this, userPayload))
+        }
+        return this.cache.users.get(userID)
+    }
+
+    /**
      * Create a chat (or return the existing one) between one (a dm chat) or multiple users (a group).
      * @param {string[]} userIDs The users to include in the group
      * @returns {Promise<Chat>} The created chat

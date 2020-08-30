@@ -31,6 +31,7 @@ class Message {
          * * `text` - a simple message
          * * `media` - a photo, a file, a GIF or a sticker
          * * `voice_media` - a voice message
+         * * `story_share` - a story share message
          */
         this.type = data.item_type === 'link' ? 'text' : data.item_type === 'animated_media' ? 'media' : data.item_type
         /**
@@ -52,6 +53,22 @@ class Message {
         }
         if (data.item_type === 'link') {
             this.content = data.link.text
+        }
+        /**
+         * @typedef {object} StoryShareData
+         * @property {User} author The user who made the story
+         * @property {string} sourceURL The url of the story's image/video
+         */
+        /**
+         * @type {StoryShareData?}
+         * The data concerning the shared story
+         */
+        this.storyShareData = undefined
+        if (data.item_type === 'story_share') {
+            this.storyShareData = {
+                author: this.client._patchOrCreateUser(data.story_share.media.user.pk, data.story_share.media.user),
+                sourceURL: data.story_share.media.image_versions2.candidates[0].url
+            }
         }
         /**
          * @typedef {object} MessageMediaData
@@ -195,6 +212,7 @@ class Message {
             content: this.content,
             mediaData: this.mediaData,
             voiceData: this.voiceData,
+            storyShareData: this.storyShareData,
             likes: this.likes
         }
     }
