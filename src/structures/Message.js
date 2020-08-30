@@ -31,6 +31,7 @@ class Message {
          * * `text` - a simple message
          * * `media` - a photo or a file
          * * `like` - a likes
+         * * `voice_media` - a voice message
          */
         this.type = data.item_type === 'link' ? 'text' : data.item_type
         /**
@@ -58,6 +59,14 @@ class Message {
          * The URL of the photo/file sent by the user
          */
         this.mediaURL = this.type === 'media' ? data.media.image_versions2.candidates[0].url : undefined
+        /**
+         * @type {VoiceMessageData}
+         * The data related to the voice message
+         */
+        this.voiceData = this.type === 'voice_media' ? {
+            duration: data.voice_media.media.audio.duration,
+            sourceURL: data.voice_media.media.audio.audio_src
+        } : undefined
 
         // handle promises
         if (this.chat && this.chat._sentMessagesPromises.has(this.id)) {
