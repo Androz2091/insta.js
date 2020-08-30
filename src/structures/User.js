@@ -134,13 +134,7 @@ class User {
     async fetchFollowers () {
         const followersItems = await this.client.ig.feed.accountFollowers(this.id).items()
         followersItems.forEach((user) => {
-            if (this.client.cache.users.has(user.pk)) {
-                this.client.cache.users.get(user.pk)._patch(user)
-            } else {
-                const createdUser = new User(this.client, user)
-                this.client.cache.users.set(user.pk, createdUser)
-            }
-            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
+            this.followers.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
         })
         return this.followers
     }
@@ -152,13 +146,7 @@ class User {
     async fetchFollowing () {
         const followingItem = await this.client.ig.feed.accountFollowing(this.id).items()
         followingItem.forEach((user) => {
-            if (this.client.cache.users.has(user.pk)) {
-                this.client.cache.users.get(user.pk)._patch(user)
-            } else {
-                const createdUser = new User(this.client, user)
-                this.client.cache.users.set(user.pk, createdUser)
-            }
-            this.followers.set(user.pk, this.client.cache.users.get(user.pk))
+            this.following.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
         })
         return this.following
     }

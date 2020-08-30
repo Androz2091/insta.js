@@ -1,6 +1,5 @@
 const Collection = require('@discordjs/collection')
 const Message = require('./Message')
-const User = require('./User')
 const Attachment = require('./Attachment')
 
 /**
@@ -60,27 +59,13 @@ class Chat {
         if ('users' in data) {
             this.users = new Collection()
             data.users.forEach((user) => {
-                const exisiting = this.client.cache.users.get(user.pk)
-                if (exisiting) {
-                    this.users.set(user.pk, exisiting)
-                    this.users.get(user.pk)._patch(user)
-                } else {
-                    this.users.set(user.pk, new User(this.client, user))
-                    this.client.cache.users.set(user.pk, this.users.get(user.pk))
-                }
+                this.users.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
             })
         }
         if ('left_users' in data) {
             this.leftUsers = new Collection()
             data.left_users.forEach((user) => {
-                const exisiting = this.client.cache.users.get(user.pk)
-                if (exisiting) {
-                    this.leftUsers.set(user.pk, exisiting)
-                    this.leftUsers.get(user.pk)._patch(user)
-                } else {
-                    this.leftUsers.set(user.pk, new User(this.client, user))
-                    this.client.cache.users.set(user.pk, this.leftUsers.get(user.pk))
-                }
+                this.leftUsers.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
             })
         }
         if ('items' in data) {

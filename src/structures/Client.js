@@ -59,6 +59,8 @@ class Client extends EventEmitter {
      * Create a new user or patch the cache one with the payload
      * @param {string} userID The ID of the user to patch
      * @param {object} userPayload The data of the user
+     * @returns {User}
+     * @private
      */
     _patchOrCreateUser (userID, userPayload) {
         if (this.cache.users.has(userID)) {
