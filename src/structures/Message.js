@@ -65,7 +65,7 @@ class Message {
          * @property {string} sourceURL The URL to retrieve the file that contains the voice message.
          */
         /**
-         * @type {VoiceMessageData}
+         * @type {VoiceMessageData?}
          * The data related to the voice message
          */
         this.voiceData = this.type === 'voice_media' ? {
