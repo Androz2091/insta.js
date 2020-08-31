@@ -11,10 +11,10 @@ module.exports = {
         ecmaVersion: 11
     },
     rules: {
-        indent: ['error', 4],
-        'comma-dangle': ['error', 'never'],
+        indent: [ 'error', 4 ],
+        'comma-dangle': [ 'error', 'never' ],
         'no-underscore-dangle': 0,
         'max-len': 0,
-        'array-bracket-spacing': ['error', 'always']
+        'array-bracket-spacing': [ 'error', 'always' ]
     }
 }
