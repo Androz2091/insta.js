@@ -37,6 +37,11 @@ class ClientUser extends User {
     get removeFollower () { return undefined }
     get send () { return undefined }
 
+    /**
+     * Change the bot's biography
+     * @param {string} content The new biography
+     * @returns {Promise<string>} The new biography
+     */
     async setBiography (content) {
         this.biography = content
         await this.client.ig.account.setBiography(content)
