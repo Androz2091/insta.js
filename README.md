@@ -2,7 +2,7 @@
 
 # [Insta.js](https://npmjs.com/@androz2091/insta.js)
 
-💬 Object-oriented library for interacting with Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)**, it is very similiar to **[discord.js](https://npmjs.com/discord.js)**.
+💬 Object-oriented library to interact with Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)**, it is very similiar to **[discord.js](https://npmjs.com/discord.js)**.
 
 ## Example
 
