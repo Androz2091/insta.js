@@ -37,6 +37,12 @@ class ClientUser extends User {
     get removeFollower () { return undefined }
     get send () { return undefined }
 
+    async setBiography (content) {
+        this.biography = content
+        await this.client.ig.account.setBiography(content)
+        return this.biography
+    }
+
     toJSON () {
         return {
             ...super.toJSON(),
