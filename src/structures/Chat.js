@@ -1,3 +1,4 @@
+const getUrls = require('get-urls')
 const Collection = require('@discordjs/collection')
 const Message = require('./Message')
 const Attachment = require('./Attachment')
@@ -207,7 +208,9 @@ class Chat {
      */
     sendMessage (content, options) {
         return new Promise((resolve) => {
-            this.threadEntity.broadcastText(content).then(({ item_id: itemID }) => {
+            const urls = getUrls(content)
+            const promise = urls.size >= 1 ? this.threadEntity.broadcastText(content, Array.from(urls)) : this.threadEntity.broadcastText(content)
+            promise.then(({ item_id: itemID }) => {
                 if (this.typing && !this._disableTypingOnSend) this._keepTypingAlive()
                 this._sentMessagesPromises.set(itemID, resolve)
                 if (this.messages.has(itemID)) {
