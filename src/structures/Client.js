@@ -16,7 +16,14 @@ const User = require('./User')
  * @extends {EventEmitter}
  */
 class Client extends EventEmitter {
-    constructor () {
+    /**
+     * @typedef {object} ClientOptions
+     * @property {boolean} disableReplyPrefix Whether the bot should disable user mention for the Message#reply() method
+     */
+    /**
+     * @param {ClientOptions} options
+     */
+    constructor (options) {
         super()
         /**
          * @type {ClientUser}
@@ -33,6 +40,11 @@ class Client extends EventEmitter {
          * Whether the bot is connected and ready.
          */
         this.ready = false
+        /**
+         * @type {ClientOptions}
+         * The options for the client.
+         */
+        this.options = options
 
         /**
          * @typedef {Object} Cache
@@ -393,6 +405,7 @@ class Client extends EventEmitter {
     toJSON () {
         const json = {
             ready: this.ready,
+            options: this.options,
             id: this.user.id
         }
         return json
