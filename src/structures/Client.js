@@ -44,7 +44,7 @@ class Client extends EventEmitter {
          * @type {ClientOptions}
          * The options for the client.
          */
-        this.options = options
+        this.options = options || {}
 
         /**
          * @typedef {Object} Cache
