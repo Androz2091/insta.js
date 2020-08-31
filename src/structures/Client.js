@@ -322,6 +322,14 @@ class Client extends EventEmitter {
     }
 
     /**
+     * Log the bot out from Instagram
+     * @returns {Promise<void>}
+     */
+    async logout () {
+        await this.ig.account.logout()
+    }
+
+    /**
      * Log the bot in to Instagram
      * @param {string} username The username of the Instagram account.
      * @param {string} password The password of the Instagram account.
