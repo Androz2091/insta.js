@@ -35,7 +35,7 @@ class MessageCollector extends EventEmitter {
          * @type {number}
          * How long to stop the collector after inactivity in milliseconds
          */
-        this.idle = idle
+        this.idle = idle || 10000
         if (idle) this._idleTimeout = setTimeout(() => this.end('idle'), this.idle)
 
         /**
@@ -49,11 +49,12 @@ class MessageCollector extends EventEmitter {
     }
 
     async handleMessage (message) {
+        if (this.ended) return
         const valid = await this.filter(message) && message.chatID === this.chat.id
         if (valid) {
             this.emit('message', message)
 
-            if (this._idleTimeout) {
+            if (this._idleTimeout && !this.ended) {
                 clearTimeout(this._idleTimeout)
                 this._idleTimeout = setTimeout(() => this.end('idle'), this.idle)
             }
@@ -65,9 +66,11 @@ class MessageCollector extends EventEmitter {
      * @param {string} reason The reason the collector ended
      */
     async end (reason) {
-        if (this._idleTimeout) clearTimeout(this._idleTimeout)
-        this.client.removeListener('messageCreate', this.handleMessage)
         this.ended = true
+        if (this._idleTimeout) {
+            clearTimeout(this._idleTimeout)
+        }
+        this.client.removeListener('messageCreate', this.handleMessage)
         this.emit('end', reason)
     }
 
