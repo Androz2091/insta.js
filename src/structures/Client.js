@@ -252,7 +252,7 @@ class Client extends EventEmitter {
                             this.fetchChat(threadID).then((chat) => {
                                 // Create a new message
                                 const messagePayload = JSON.parse(data.value)
-                                if (messagePayload.item_type === 'action_log') return
+                                if (messagePayload.item_type === 'action_log' || messagePayload.item_type === 'video_call_event') return
                                 const message = new Message(this, threadID, messagePayload)
                                 chat.messages.set(message.id, message)
                                 if (Util.isMessageValid(message)) this.emit('messageCreate', message)
