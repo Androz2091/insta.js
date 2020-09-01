@@ -1,5 +1,6 @@
 const getUrls = require('get-urls')
 const Collection = require('@discordjs/collection')
+const Util = require('../utils/Util')
 const Message = require('./Message')
 const Attachment = require('./Attachment')
 
@@ -137,7 +138,7 @@ class Chat {
         await this.client.ig.directThread.approve(this.id)
         if (!this.client.cache.chats.has(this.id)) this.client.cache.chats.set(this.id, this)
         this.client.cache.pendingChats.delete(this.id)
-        this.client.emit('messageCreate', this.messages.first())
+        if (Util.isMessageValid(this.messages.first())) this.emit('messageCreate', this.messages.first())
     }
 
     /**

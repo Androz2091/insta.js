@@ -25,4 +25,8 @@ module.exports = class Util {
         const isMatched = /\/direct_v2\/inbox\/threads\/(\d+)/.test(query)
         return extract ? query.match(/\/direct_v2\/inbox\/threads\/(\d+)/).slice(1) : isMatched
     }
+
+    static isMessageValid (message) {
+        return ((message.timestamp / 1000) + 10000) > Date.now()
+    }
 }

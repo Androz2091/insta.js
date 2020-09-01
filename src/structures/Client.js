@@ -255,7 +255,7 @@ class Client extends EventEmitter {
                                 if (messagePayload.item_type === 'action_log') return
                                 const message = new Message(this, threadID, messagePayload)
                                 chat.messages.set(message.id, message)
-                                this.emit('messageCreate', message)
+                                if (Util.isMessageValid(message)) this.emit('messageCreate', message)
                             })
                         }
                         break
