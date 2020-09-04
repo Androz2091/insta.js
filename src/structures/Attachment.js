@@ -23,6 +23,7 @@ class Attachment {
     /**
      * Verify the attachment and generate the file buffer
      * @private
+     * @return {Promise<void>}
      */
     _verify () {
         if (!this.data) throw new Error('Can not create empty attachment!')
@@ -32,6 +33,11 @@ class Attachment {
         throw new Error('Unsupported attachment.')
     }
 
+    /**
+     * File handler
+     * @param {string} file Image path
+     * @return {Promise<void>}
+     */
     async _handleFile (file) {
         if (!fs.existsSync(file)) throw new Error('Couldn\'t resolve the file.')
         const fileStream = fs.readFileSync(file)
@@ -42,11 +48,21 @@ class Attachment {
         return this._handleBuffer(fileStream)
     }
 
+    /**
+     * Buffer handler
+     * @param {Buffer} data Image buffer
+     * @return {Promise<void>}
+     */
     async _handleBuffer (data) {
         const image = await Jimp.read(data)
         this.file = await image.getBufferAsync(Jimp.MIME_JPEG)
     }
 
+    /**
+     * URL handler
+     * @param {string} link Image url
+     * @return {Promise<void>}
+     */
     async _handleURL (link) {
         if (!link || typeof link !== 'string') throw new Error('URL must be a string.')
         const res = await fetch(link)

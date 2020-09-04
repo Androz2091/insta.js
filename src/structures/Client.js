@@ -17,7 +17,7 @@ const User = require('./User')
  */
 class Client extends EventEmitter {
     /**
-     * @typedef {object} ClientOptions
+     * @typedef {ClientOptions} ClientOptions
      * @property {boolean} disableReplyPrefix Whether the bot should disable user mention for the Message#reply() method
      */
     /**
@@ -26,12 +26,12 @@ class Client extends EventEmitter {
     constructor (options) {
         super()
         /**
-         * @type {ClientUser}
+         * @type {?ClientUser}
          * The bot's user object.
          */
         this.user = null
         /**
-         * @type {IgApiClient}
+         * @type {?IgApiClient}
          * @private
          */
         this.ig = null
@@ -64,15 +64,18 @@ class Client extends EventEmitter {
             pendingChats: new Collection()
         }
 
+        /**
+         * @type {...any[]}
+         */
         this.eventsToReplay = []
     }
 
     /**
      * Create a new user or patch the cache one with the payload
-     * @param {string} userID The ID of the user to patch
-     * @param {object} userPayload The data of the user
-     * @returns {User}
      * @private
+     * @param {string} userID The ID of the user to patch
+     * @param {import('instagram-private-api').UserRepositoryInfoResponseUser} userPayload The data of the user
+     * @returns {User}
      */
     _patchOrCreateUser (userID, userPayload) {
         if (this.cache.users.has(userID)) {
@@ -106,7 +109,7 @@ class Client extends EventEmitter {
      *   chat.send('Hey!');
      * });
      */
-    async fetchChat (chatID, force) {
+    async fetchChat (chatID, force = false) {
         if (!this.cache.chats.has(chatID)) {
             const { thread: chatPayload } = await this.ig.feed.directThread({ thread_id: chatID }).request()
             const chat = new Chat(this, chatID, chatPayload)
@@ -131,7 +134,7 @@ class Client extends EventEmitter {
      *   user.follow();
      * });
      */
-    async fetchUser (query, force) {
+    async fetchUser (query, force = false) {
         const userID = Util.isID(query) ? query : await this.ig.user.getIdByUsername(query)
         if (!this.cache.users.has(userID)) {
             const userPayload = await this.ig.user.info(userID)
@@ -374,7 +377,6 @@ class Client extends EventEmitter {
                 this.cache.pendingChats.set(thread.thread_id, chat)
             }
         })
-
         ig.realtime.on('receive', (topic, messages) => this.handleRealtimeReceive(topic, messages))
         ig.realtime.on('error', console.error)
         ig.realtime.on('close', () => console.error('RealtimeClient closed'))
@@ -382,7 +384,7 @@ class Client extends EventEmitter {
         await ig.realtime.connect({
             irisData: await ig.feed.directInbox().request()
         })
-
+        // PartialObserver<FbnsNotificationUnknown>
         ig.fbns.push$.subscribe((data) => this.handleFbnsReceive(data))
 
         await ig.fbns.connect({

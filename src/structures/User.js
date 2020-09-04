@@ -93,7 +93,7 @@ class User {
          * @type {number?}
          * The number of followed users by the user
          */
-        this.followingCount = 'following_count' in data ? data.following_count : this.followingCount
+        this.followerCount = 'following_count' in data ? data.following_count : this.followingCount
         /**
          * @type {number?}
          * The number of videos published by IGTV

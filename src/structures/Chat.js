@@ -171,7 +171,7 @@ class Chat {
     /**
      * Start typing in the chat
      * @param {number} [options] Options
-     * @param {number} [options.time=10000] For how long the client should type
+     * @param {number} [options.duration=10000] For how long the client should type
      * @param {boolean} [options.disableOnSend=true] Whether the bot should stop typing when it sends a new message
      * @returns {Promise<void>}
      */
@@ -284,7 +284,7 @@ class Chat {
         return {
             client: this.client.toJSON(),
             adminUserIDs: this.adminUserIDs,
-            lastActivityAt: this.adminUserIDs,
+            lastActivityAt: this.lastActivityAt,
             muted: this.muted,
             isPin: this.isPin,
             named: this.named,
