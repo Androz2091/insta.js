@@ -21,8 +21,8 @@ declare module 'insta.js' {
         private handleFbnsReceive(data: FbnsNotificationUnknown): void;
         
         public createChat(userIDs: string[]): Promise<Chat>;
-        public fetchChat(chatID: string, force: false): Promise<Chat>;
-        public fetchUser(query: string, force: false): Promise<User>;
+        public fetchChat(chatID: string, force: boolean): Promise<Chat>;
+        public fetchUser(query: string, force: boolean): Promise<User>;
         public logout(): void;
         public login(username: string, password: string, state: object): void;
         public toJSON(): ClientJSON;
@@ -95,7 +95,7 @@ declare module 'insta.js' {
         public markMessageSeen(messageID: string): void;
         public deleteMessage(messageID: string): void;
         public _keepTypingAlive(): void;
-        public startTyping({} = {duration: 10000, disableOnSend: true}): Promise<void>;
+        public startTyping(options: StartTypingOptions): Promise<void>;
         public stopTyping(): Promise<void>;
         public sendMessage(content: string, options: any): Promise<Message>;
         public sendVoice(buffer: Buffer): Promise<Message>;
@@ -122,7 +122,7 @@ declare module 'insta.js' {
     };
 
     class Message {
-        constructor(client: Client, threadID: string, data: MessageData);
+        constructor(client: Client, threadID: string, data: object);
 
         public client: Client;
         public id: string;
@@ -130,7 +130,7 @@ declare module 'insta.js' {
         public type: 'text' | 'media' | 'voice_media' | 'story_share';
         public timestamp: number;
         public authorID: string;
-        public content: ?string;
+        public content?: string;
         public storyShareData: {
             author: User | null;
             sourceURL: string | null;
@@ -139,7 +139,7 @@ declare module 'insta.js' {
             isLiked: boolean;
             isAnimated: boolean;
             isSticker: boolean;
-            url: ?string;
+            url?: string;
         };
         public voiceData: {
             duration: number;
@@ -149,12 +149,12 @@ declare module 'insta.js' {
         public readonly chat: Chat;
         public readonly author: User;
 
-        public _patch(data: MessageData): void;
+        public _patch(data: object): void;
         public createMessageCollector(options: MessageCollectorOptions): MessageCollector;
         public markSeen(): Promise<void>;
         public delete(): Promise<void>;
         public reply(content: string): Promise<Message>;
-        public toString(): ?string;
+        public toString(): string;
         public toJSON(): MessageJSON;
     }
 
@@ -210,11 +210,11 @@ declare module 'insta.js' {
         public isVerified: boolean;
         public isBusiness: boolean;
         public avatarURL: string;
-        public biography: ?string;
-        public mediaCount: ?number;
-        public followerCount: ?number;
-        public followerCount: ?number;
-        public totalIgtvVideos: ?number;
+        public biography?: string;
+        public mediaCount?: number;
+        public followerCount?: number;
+        public followerCount?: number;
+        public totalIgtvVideos?: number;
         public readonly privateChat: Chat;
         
         public _patch(data: UserData): void;
@@ -239,6 +239,11 @@ declare module 'insta.js' {
         public static matchMessagePath(query: string, extract: boolean): string[] | boolean;
         public static matchInboxPath(query: string, extract: boolean): string[] | boolean;
         public static isMessageValid(message: Message): boolean;
+    }
+
+    interface StartTypingOptions {
+        duration: number;
+        disableOnSend: boolean;
     }
 
     interface ClientOptions {
