@@ -17,7 +17,7 @@ const User = require('./User')
  */
 class Client extends EventEmitter {
     /**
-     * @typedef {ClientOptions} ClientOptions
+     * @typedef {object} ClientOptions
      * @property {boolean} disableReplyPrefix Whether the bot should disable user mention for the Message#reply() method
      */
     /**
