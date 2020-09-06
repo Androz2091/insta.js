@@ -5,7 +5,7 @@
  */
 class Util {
     /**
-     * Parse message for return threadID and itemID
+     * Parse message to return a thread ID and an item ID
      * @param {string} url The URL path to parse
      * @return {{threadID: string, itemID: string}}
      */
