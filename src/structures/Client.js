@@ -74,7 +74,7 @@ class Client extends EventEmitter {
      * Create a new user or patch the cache one with the payload
      * @private
      * @param {string} userID The ID of the user to patch
-     * @param {import('instagram-private-api').UserRepositoryInfoResponseUser} userPayload The data of the user
+     * @param {object} userPayload The data of the user
      * @returns {User}
      */
     _patchOrCreateUser (userID, userPayload) {

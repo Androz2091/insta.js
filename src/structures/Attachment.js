@@ -2,9 +2,11 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const Jimp = require('jimp')
 
+/**
+ * Create an attachment for insta.js
+ */
 class Attachment {
     /**
-     * Create an attachment for insta.js
      * @param {string|Buffer} data Attachment data
      */
     constructor (data) {
