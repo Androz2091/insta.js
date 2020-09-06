@@ -73,22 +73,22 @@ declare module 'insta.js' {
         public messages: Collection<string, Message>;
         public users: Collection<string, User>;
         public leftUsers: Collection<string, User>;
-        public typing: Boolean;
-        public _disableTypingOnSend: Boolean | null | undefined;
+        public typing: boolean;
+        public _disableTypingOnSend: boolean | null | undefined;
         public _stopTypingTimeout: NodeJS.Timeout | null;
         public _keepTypingAliveInterval: NodeJS.Timeout | null;
         public _sentMessagesPromises: Collection<>;
         public readonly threadEntity: DirectThreadEntity;
         public adminUserIDs: string[] | null;
         public lastActivityAt: number | null;
-        public muted: Boolean | null;
-        public isPin: Boolean | null;
-        public named: Boolean | null;
+        public muted: boolean | null;
+        public isPin: boolean | null;
+        public named: boolean | null;
         public name: string | null;
         public pending: string | null;
-        public isGroup: Boolean | null;
-        public type: Boolean | null;
-        public calling: Boolean | null;
+        public isGroup: boolean | null;
+        public type: boolean | null;
+        public calling: boolean | null;
 
         public _patch(data: ChatData): void;
         public approve(): Promise<void>;
@@ -136,16 +136,16 @@ declare module 'insta.js' {
             sourceURL: string | null;
         } | undefined;
         public mediaData: {
-            isLiked: Boolean;
-            isAnimated: Boolean;
-            isSticker: Boolean;
+            isLiked: boolean;
+            isAnimated: boolean;
+            isSticker: boolean;
             url: ?string;
         };
         public voiceData: {
             duration: number;
             sourceURL: string;
         } | undefined;
-        public likes: {userID: string; timestamp: number}[] | [];
+        public likes: MessageLike[];
         public readonly chat: Chat;
         public readonly author: User;
 
@@ -165,7 +165,7 @@ declare module 'insta.js' {
         public chat: Chat;
         public filter: Function;
         public idle: number;
-        public ended: Boolean;
+        public ended: boolean;
         public handleMessage: Promise<void>;
 
         public handleMessage(MessageCollector: Message): Promise<void>;
@@ -206,9 +206,9 @@ declare module 'insta.js' {
         public following: Collection<string, User>;
         public username: string;
         public fullname: string;
-        public isPrivate: Boolean;
-        public isVerified: Boolean;
-        public isBusiness: Boolean;
+        public isPrivate: boolean;
+        public isVerified: boolean;
+        public isBusiness: boolean;
         public avatarURL: string;
         public biography: ?string;
         public mediaCount: ?number;
@@ -231,16 +231,14 @@ declare module 'insta.js' {
         public removeFollower(): Promise<void>;
         public send(content: string): Promise<Message>;
         public toString(): string;
-        public 
     }
 
     class Util {
-        static public parseMessagePath(url: string): {threadID: string; itemID: string};
-        static public isID(query: string): Boolean;
-        static public matchAdminPath(query: string, extract: false): string | Boolean;
-        static public matchMessagePath(query: string, extract: false): string | Boolean;
-        static public matchInboxPath(query: string, extract: false): string | Boolean;
-        static public isMessageValid(message: Message): Boolean;
+        public static isID(query: string): boolean;
+        public static matchAdminPath(query: string, extract: boolean): string[] | boolean;
+        public static matchMessagePath(query: string, extract: boolean): string[] | boolean;
+        public static matchInboxPath(query: string, extract: boolean): string[] | boolean;
+        public static isMessageValid(message: Message): boolean;
     }
 
     interface ClientOptions {
@@ -264,19 +262,24 @@ declare module 'insta.js' {
         client: ClientJSON;
         adminUserIDs: string | null;
         lastActivityAt: number | null;
-        muted: Boolean | null;
-        isPin: Boolean | null;
-        named: Boolean | null;
-        pending: Boolean | null;
-        isGroup: Boolean | null;
-        calling: Boolean | null;
+        muted: boolean | null;
+        isPin: boolean | null;
+        named: boolean | null;
+        pending: boolean | null;
+        isGroup: boolean | null;
+        calling: boolean | null;
         users: string[];
         messages: string[];
     }
 
     interface ClientUserJSON extends UserJSON {
-        allowContactsSync: Boolean;
+        allowContactsSync: boolean;
         phoneNumber: string;
+    }
+
+    interface MessageLike {
+        userID: string;
+        timestamp: string;
     }
 
     interface MessageJSON {
@@ -287,108 +290,76 @@ declare module 'insta.js' {
         authorID: string;
         content: string;
         mediaData: {
-            isLiked: Boolean;
-            isAnimated: Boolean;
-            isSticker: Boolean;
-            url: ?string;
+            isLiked: boolean;
+            isAnimated: boolean;
+            isSticker: boolean;
+            url?: string;
         };
         voiceData: {
             duration: number;
             sourceURL: string;
         } | undefined;
-        storyShareDate: {
+        storyShareData: {
             author: User | null;
             sourceURL: string | null;
         } | undefined;
-        likes: {userID: string; timestamp: number}[] | [];
+        likes: MessageLike[];
     }
 
     interface MessageCollectorJSON {
         client: ClientJSON;
         chatID: string;
-        ended: Boolean;
+        ended: boolean;
     }
 
     interface UserJSON {
         client: ClientJSON;
         username: string;
         fullname: string;
-        isPrivate: Boolean;
-        isVerified: Boolean;
-        isBusiness: Boolean;
+        isPrivate: boolean;
+        isVerified: boolean;
+        isBusiness: boolean;
         avatarURL: string;
-        biography: ?string;
-        mediaCount: ?number;
-        followerCount: ?number;
-        followersCount: ?number;
-        followers: string[];
-        following: string[];
-        totalIgtvVideos: ?number;
+        biography?: string;
+        mediaCount?: number;
+        followerCount?: number;
+        followersCount?: number;
+        followers?: string[];
+        following?: string[];
+        totalIgtvVideos?: number;
     }
 
     interface ChatData {
         admin_user_ids: string[];
         lastActivityAt: number;
-        muted: Boolean;
-        isPin: Boolean;
-        named: Boolean;
+        muted: boolean;
+        isPin: boolean;
+        named: boolean;
         name: string;
-        pending: Boolean;
-        isGroup: Boolean;
-        type: Boolean;
-        calling: Boolean;
+        pending: boolean;
+        isGroup: boolean;
+        type: boolean;
+        calling: boolean;
     }
 
     interface ClientUserData {
-        allowContactsSync: Boolean;
+        allowContactsSync: boolean;
         phoneNumber: string;
     }
-
-    interface MessageData {
-        item_id: string;
-        item_type: 'text' | 'media' | 'voice_media' | 'story_share';
-        timestamp: number;
-        user_id: string;
-        text: string;
-        link: {text: string};
-        story_share: {
-            message: 'No longer available' | string
-            media: {
-                user: UserRepositoryInfoResponseUser
-                image_versions2: {
-                    condidates: {url: string}[];
-                };
-            };
-        };
-        animated_media: {
-            is_sticker: Boolean;
-            fixed_height: {
-                url: ?Boolean;
-            };
-        };
-        voice_media: {
-            media: {
-                audio: {
-                    duration: number;
-                    sourceURL: string;
-                };
-            };
-        };
-    };
 
     interface UserData {
         pk: string;
         username: string;
         fullName: string;
-        isPrivate: Boolean;
-        isVerified: Boolean;
-        isBusiness: Boolean;
+        isPrivate: boolean;
+        isVerified: boolean;
+        isBusiness: boolean;
         avatarURL: string;
-        biography: ?string;
-        mediaCount: ?number;
-        followerCount: ?number;
-        followingCount: ?number;
-        totalIgtvVideos: ?number;
+        biography?: string;
+        mediaCount?: number;
+        followerCount?: number;
+        followingCount?: number;
+        totalIgtvVideos?: number;
     }
 
     interface ClientEvents {
