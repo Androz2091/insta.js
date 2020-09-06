@@ -6,7 +6,7 @@
 class Util {
     /**
      * Parse message for return threadID and itemID
-     * @param {string} url The url to parsed
+     * @param {string} url The URL path to parse
      * @return {{threadID: string, itemID: string}}
      */
     static parseMessagePath (url) {
