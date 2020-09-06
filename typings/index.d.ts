@@ -247,7 +247,7 @@ declare module 'insta.js' {
     }
 
     interface ClientOptions {
-
+        disableReplyPrefix: boolean;
     }
 
     interface Cache {
