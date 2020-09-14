@@ -4,9 +4,14 @@
 
 💬 Object-oriented library to interact with Instagram! Based on **[instagram-private-api](https://github.com/dilame/instagram-private-api)**, it is very similiar to **[discord.js](https://npmjs.com/discord.js)**.
 
+## Installation
+```
+npm install @androz2091/insta.js
+```
+
 ## Example
 
-Here is a simple chatbot made with the library:
+Here is a simple ping command made with the library:
 
 ```js
 const Insta = require('@androz2091/insta.js');
