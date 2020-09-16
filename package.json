@@ -1,6 +1,6 @@
 {
   "name": "@androz2091/insta.js",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Object-oriented library for sending and receiving messages via Instagram",
   "main": "src/index.js",
   "types": "./typings/index.d.ts",
