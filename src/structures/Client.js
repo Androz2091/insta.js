@@ -106,7 +106,7 @@ class Client extends EventEmitter {
      *
      * @example
      * client.fetchChat('340282366841710300949128114477310087639').then((chat) => {
-     *   chat.send('Hey!');
+     *   chat.sendMessage('Hey!');
      * });
      */
     async fetchChat (chatID, force = false) {
