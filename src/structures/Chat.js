@@ -207,7 +207,7 @@ class Chat {
      * @example
      * chat.sendMessage('hey!');
      */
-    sendMessage (content, options) {
+    sendMessage (content) {
         return new Promise((resolve) => {
             const urls = getUrls(content)
             const promise = urls.size >= 1 ? this.threadEntity.broadcastText(content, Array.from(urls)) : this.threadEntity.broadcastText(content)

@@ -95,9 +95,9 @@ declare module '@androz2091/insta.js' {
         public markMessageSeen(messageID: string): void;
         public deleteMessage(messageID: string): void;
         public _keepTypingAlive(): void;
-        public startTyping(options: StartTypingOptions): Promise<void>;
+        public startTyping(options?: StartTypingOptions): Promise<void>;
         public stopTyping(): Promise<void>;
-        public sendMessage(content: string, options: any): Promise<Message>;
+        public sendMessage(content: string): Promise<Message>;
         public sendVoice(buffer: Buffer): Promise<Message>;
         public sendPhoto(attachment: string | Buffer | Attachment): Promise<Message>;
         public toJSON(): ChatJSON;
