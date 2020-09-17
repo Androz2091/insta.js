@@ -18,7 +18,7 @@ class User {
          * @type {string}
          * The ID of the user
          */
-        this.id = data.pk
+        this.id = data.pk.toString()
         /**
          * @type {Collection<string, User>}
          * Collection of users that follow this user.
@@ -134,7 +134,7 @@ class User {
     async fetchFollowers () {
         const followersItems = await this.client.ig.feed.accountFollowers(this.id).items()
         followersItems.forEach((user) => {
-            this.followers.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
+            this.followers.set(user.pk.toString(), this.client._patchOrCreateUser(user.pk, user))
         })
         return this.followers
     }
@@ -146,7 +146,7 @@ class User {
     async fetchFollowing () {
         const followingItem = await this.client.ig.feed.accountFollowing(this.id).items()
         followingItem.forEach((user) => {
-            this.following.set(user.pk, this.client._patchOrCreateUser(user.pk, user))
+            this.following.set(user.pk.toString(), this.client._patchOrCreateUser(user.pk, user))
         })
         return this.following
     }

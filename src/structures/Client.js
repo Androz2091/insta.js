@@ -78,12 +78,12 @@ class Client extends EventEmitter {
      * @returns {User}
      */
     _patchOrCreateUser (userID, userPayload) {
-        if (this.cache.users.has(userID)) {
-            this.cache.users.get(userID)._patch(userPayload)
+        if (this.cache.users.has(userID.toString())) {
+            this.cache.users.get(userID.toString())._patch(userPayload)
         } else {
-            this.cache.users.set(userID, new User(this, userPayload))
+            this.cache.users.set(userID.toString(), new User(this, userPayload))
         }
-        return this.cache.users.get(userID)
+        return this.cache.users.get(userID.toString())
     }
 
     /**

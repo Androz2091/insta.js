@@ -19,7 +19,7 @@ class Message {
          * @type {string}
          * The ID of the message
          */
-        this.id = data.item_id
+        this.id = data.item_id.toString()
         /**
          * @type {string}
          * The ID of the chat the message was sent in
@@ -43,7 +43,7 @@ class Message {
          * @type {string}
          * The ID of the user who sent the message
          */
-        this.authorID = data.user_id
+        this.authorID = data.user_id.toString()
         /**
          * @type {string?}
          * The content of the message
