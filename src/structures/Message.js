@@ -26,6 +26,11 @@ class Message {
          */
         this.chatID = threadID
         /**
+         * @type {object}
+         * The full message payload instagram is sending (forwarded by the dilame/instagram-private-api)
+         */
+        this.data = data
+        /**
          * @type {string}
          * The type of the message, either:
          * * `text` - a simple message
