@@ -138,7 +138,7 @@ class Chat {
         await this.client.ig.directThread.approve(this.id)
         if (!this.client.cache.chats.has(this.id)) this.client.cache.chats.set(this.id, this)
         this.client.cache.pendingChats.delete(this.id)
-        if (Util.isMessageValid(this.messages.first())) this.emit('messageCreate', this.messages.first())
+        if (Util.isMessageValid(this.messages.first())) this.client.emit('messageCreate', this.messages.first())
     }
 
     /**
