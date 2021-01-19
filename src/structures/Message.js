@@ -65,9 +65,16 @@ class Message {
          */
         this.storyShareData = undefined
         if (data.item_type === 'story_share') {
-            this.storyShareData = {
-                author: data.story_share.message === 'No longer available' ? null : this.client._patchOrCreateUser(data.story_share.media.user.pk, data.story_share.media.user),
-                sourceURL: data.story_share.message === 'No longer available' ? null : data.story_share.media.image_versions2.candidates[0].url
+            if (data.story_share.message === 'No longer available' || data.story_share.message.startsWith("This story is hidden because")) {
+                this.storyShareData = {
+                    author: null,
+                    sourceURL: null
+                }
+            } else {
+                this.storyShareData = {
+                    author: this.client._patchOrCreateUser(data.story_share.media.user.pk, data.story_share.media.user),
+                    sourceURL: data.story_share.media.image_versions2.candidates[0].url
+                }
             }
         }
         /**
