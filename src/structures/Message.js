@@ -29,7 +29,10 @@ class Message {
          * @type {object}
          * The full message payload instagram is sending (forwarded by the dilame/instagram-private-api)
          */
-        this.data = data
+        Object.defineProperty(this, 'data', {
+            value: data,
+            writable: false
+        })
         /**
          * @type {string}
          * The type of the message, either:
