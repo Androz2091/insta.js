@@ -65,7 +65,8 @@ class Message {
          */
         this.storyShareData = undefined
         if (data.item_type === 'story_share') {
-            if (data.story_share.message === 'No longer available' || data.story_share.message.startsWith("This story is hidden because")) {
+            const msg = data.story_share.message
+            if (msg === undefined || msg === 'No longer available' || msg.startsWith("This story is hidden because")) {
                 this.storyShareData = {
                     author: null,
                     sourceURL: null
