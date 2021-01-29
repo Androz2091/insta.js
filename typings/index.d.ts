@@ -1,4 +1,4 @@
-declare module 'insta.js' {
+declare module '@androz2091/insta.js' {
     import ipa, { DirectThreadEntity, UserRepositoryInfoResponseUser } from 'instagram-private-api';
     import { EventEmitter } from 'events';
     import { Collection } from '@discordjs/collection';
