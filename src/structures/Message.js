@@ -81,7 +81,7 @@ class Message {
                 }
             } else {
                 this.storyShareData = {
-                    author: this.client._patchOrCreateUser(data.story_share.media?.user.pk, data.story_share.media?.user),
+                    author: this.client._patchOrCreateUser(data.story_share.media.user.pk, data.story_share.media.user),
                     sourceURL: data.story_share.media.image_versions2.candidates[0].url
                 }
             }
@@ -211,7 +211,7 @@ class Message {
      * @returns {Promise<Message>}
      */
     reply (content) {
-        return this.chat.sendMessage(`${this.client.options.disableReplyPrefix ? '' : `@${this.author.username}, `}${content}`)
+        return this.chat.sendMessage(`${this.client.options.disableReplyPrefix ? '' : `${this.author.username}, `}${content}`)
     }
 
     toString () {
