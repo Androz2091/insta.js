@@ -242,8 +242,7 @@ class Chat {
      */
     sendVoice (buffer) {
         return new Promise((resolve) => {
-            this.threadEntity.broadcastVoice({ file: buffer }).then((upload) => {
-                let itemID = upload.message_metadata[0].item_id
+            this.threadEntity.broadcastVoice({ file: buffer }).then(({ item_id: itemID }) => {
                 if (this.typing && !this._disableTypingOnSend) this._keepTypingAlive()
                 this._sentMessagesPromises.set(itemID, resolve)
                 if (this.messages.has(itemID)) {
