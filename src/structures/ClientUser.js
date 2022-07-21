@@ -48,6 +48,21 @@ class ClientUser extends User {
         return this.biography
     }
 
+    async post (buffer, captiontxt) {
+        const publishResult = await this.client.ig.publish.photo({
+            file: buffer, // image buffer, specify image from your disk using fs or from web using request-promise
+            caption: captiontxt, // nice caption (optional)
+        });
+
+        if (publishResult.status == "ok") {
+            console.log("postPicture debug: sucess")
+            return true
+        } else {
+            console.log("postPicture debug: failed")
+            return false
+        }
+    }
+
     toJSON () {
         return {
             ...super.toJSON(),
